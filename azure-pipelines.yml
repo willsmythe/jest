@@ -17,7 +17,7 @@ jobs:
       npm run build
     displayName: 'npm install and build'
   - script: |
-      yarn jest --color
+      yarn run test-ci-partial
     displayName: 'test'
 
 - job: macOS
@@ -31,10 +31,8 @@ jobs:
   - script: |
       npm install
       npm run build
-    displayName: 'npm install and build'
-  - script: |
       yarn jest --color
-    displayName: 'test'
+    displayName: 'install, build, and test'
 
 - job: Windows
   pool:
