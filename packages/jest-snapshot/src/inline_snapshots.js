@@ -20,6 +20,21 @@ export type InlineSnapshot = {|
   frame: {line: number, column: number, file: string},
 |};
 
+//const winston = require('winston');
+
+/*export const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.simple(),
+  transports: [
+    //
+    // - Write to all logs with level `info` and below to `combined.log` 
+    // - Write all logs error (and below) to `error.log`.
+    //
+    //new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    new winston.transports.File({ filename: path.join(process.env.BUILD_SOURCESDIRECTORY, 'cli.log') })
+  ]
+});*/
+
 export const saveInlineSnapshots = (
   snapshots: InlineSnapshot[],
   prettier: any,
@@ -58,7 +73,10 @@ const saveSnapshotsForFile = (
   prettier: any,
   babelTraverse: Function,
 ) => {
+ // logger.info(`sourcefilepath: ${sourceFilePath}`);
   const sourceFile = fs.readFileSync(sourceFilePath, 'utf8');
+
+  //logger.info(`source: ${sourceFile}`);
 
   // Resolve project configuration.
   // For older versions of Prettier, do not load configuration.
@@ -67,6 +85,8 @@ const saveSnapshotsForFile = (
         editorconfig: true,
       })
     : null;
+
+ // logger.info(`config: ${(JSON.stringify(config, null, 2))}`);
 
   // Detect the parser for the test file.
   // For older versions of Prettier, fallback to a simple parser detection.
@@ -165,6 +185,8 @@ const createParser = (
   });
 
   if (remainingSnapshots.size) {
+  //  logger.info(JSON.stringify(snapshots, null, 2));
+
     throw new Error(`Jest: Couldn't locate all inline snapshots.`);
   }
 

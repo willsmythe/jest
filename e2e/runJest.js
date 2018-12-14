@@ -13,7 +13,7 @@ import fs from 'fs';
 import execa, {sync as spawnSync} from 'execa';
 import {Writable} from 'readable-stream';
 const stripAnsi = require('strip-ansi');
-import {normalizeIcons} from './Utils';
+import {normalizeIcons,logger} from './Utils';
 
 const JEST_PATH = path.resolve(__dirname, '../packages/jest-cli/bin/jest.js');
 
@@ -33,9 +33,12 @@ export default function runJest(
 ) {
   const isRelative = dir[0] !== '/';
 
+  
   if (isRelative) {
     dir = path.resolve(__dirname, dir);
   }
+
+  //logger.info(`runJest: ${dir}: ${(args ? args.join(' ') : 'no args')} `);
 
   const localPackageJson = path.resolve(dir, 'package.json');
   if (!options.skipPkgJsonCheck && !fs.existsSync(localPackageJson)) {
@@ -49,13 +52,19 @@ export default function runJest(
     );
   }
 
+  
   const env = Object.assign({}, process.env, {FORCE_COLOR: 0});
   if (options.nodePath) env['NODE_PATH'] = options.nodePath;
+  
+  //logger.info(`jestpath: ${JEST_PATH} ${(JSON.stringify(env, null, 2))}`);
+  
   const result = spawnSync(JEST_PATH, args || [], {
     cwd: dir,
     env,
     reject: false,
   });
+
+ // logger.info(`after runJest: ${result.code}`);
 
   // For compat with cross-spawn
   result.status = result.code;

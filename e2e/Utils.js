@@ -17,10 +17,29 @@ import path from 'path';
 import mkdirp from 'mkdirp';
 import rimraf from 'rimraf';
 
+// BUILD_SOURCESDIRECTORY
+
+/*const winston = require('winston');
+
+export const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.simple(),
+  transports: [
+    //
+    // - Write to all logs with level `info` and below to `combined.log` 
+    // - Write all logs error (and below) to `error.log`.
+    //
+    //new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    new winston.transports.File({ filename: path.join(process.env.BUILD_SOURCESDIRECTORY, 'tests.log') })
+  ]
+});*/
+
 export const run = (cmd: string, cwd?: Path) => {
   const args = cmd.split(/\s/).slice(1);
   const spawnOptions = {cwd, reject: false};
   const result = spawnSync(cmd.split(/\s/)[0], args, spawnOptions);
+
+ // logger.info(`run: ${cmd} in ${cwd}`);
 
   // For compat with cross-spawn
   result.status = result.code;
@@ -58,7 +77,10 @@ export const makeTemplate = (
     return values[number - 1];
   });
 
-export const cleanup = (directory: string) => rimraf.sync(directory);
+export const cleanup = (directory: string) => {
+  //logger.info(`cleanup: ${directory}`); 
+  rimraf.sync(directory);
+}
 
 /**
  * Creates a nested directory with files and their contents
@@ -74,14 +96,21 @@ export const writeFiles = (
   directory: string,
   files: {[filename: string]: string},
 ) => {
-  mkdirp.sync(directory);
+  //logger.info(`writefiles: ${directory}`);
+
+  mkdirp.sync(directory, { mode: '0777'} );
   Object.keys(files).forEach(fileOrPath => {
     const filePath = fileOrPath.split('/'); // ['tmp', 'a.js']
     const filename = filePath.pop(); // filepath becomes dirPath (no filename)
 
+    //logger.info(`writefiles: ${directory}/${filePath}/${filename}`);
+
     if (filePath.length) {
-      mkdirp.sync(path.join.apply(path, [directory].concat(filePath)));
+      mkdirp.sync(path.join.apply(path, [directory].concat(filePath)), { mode: '0777'} );
     }
+
+  //  logger.info(`content: ${files[fileOrPath]}`);
+
     fs.writeFileSync(
       path.resolve.apply(path, [directory].concat(filePath, [filename])),
       files[fileOrPath],

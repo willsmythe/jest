@@ -9,7 +9,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import {cleanup, makeTemplate, writeFiles} from '../Utils';
+import {cleanup, makeTemplate, writeFiles, logger} from '../Utils';
 import runJest from '../runJest';
 
 const DIR = path.resolve(__dirname, '../toMatchInlineSnapshot');
@@ -28,10 +28,12 @@ test('basic support', () => {
   );
 
   {
+    //logger.info('basic support 1');
     writeFiles(TESTS_DIR, {
       [filename]: template(['{apple: "original value"}']),
     });
-    const {stderr, status} = runJest(DIR, ['-w=1', '--ci=false', filename]);
+    const {stdout, stderr, status} = runJest(DIR, ['-w=1', '--ci=false', filename]);
+    //logger.info(`runjest stdout: ${stdout}`);
     const fileAfter = readFile(filename);
     expect(stderr).toMatch('1 snapshot written from 1 test suite.');
     expect(status).toBe(0);
@@ -39,6 +41,7 @@ test('basic support', () => {
   }
 
   {
+    //logger.info('basic support 2');
     const {stderr, status} = runJest(DIR, ['-w=1', '--ci=false', filename]);
     const fileAfter = readFile(filename);
     expect(stderr).toMatch('Snapshots:   1 passed, 1 total');
@@ -48,6 +51,7 @@ test('basic support', () => {
   }
 
   {
+    //logger.info('basic support 3');
     writeFiles(TESTS_DIR, {
       [filename]: readFile(filename).replace('original value', 'updated value'),
     });
@@ -59,6 +63,7 @@ test('basic support', () => {
   }
 
   {
+    //logger.info('basic support 4');
     const {stderr, status} = runJest(DIR, [
       '-w=1',
       '--ci=false',

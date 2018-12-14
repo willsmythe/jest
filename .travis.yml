@@ -6,6 +6,12 @@ node_js:
 sudo: false
 
 before_install:
+  - env
+  - printenv | grep TERM
+  - npm install --global supports-color-cli
+  - supports-color && echo $?
+  - supports-color --256 && echo $?
+  - supports-color --16m && echo $?  
   - curl -o- -L https://yarnpkg.com/install.sh | bash
   - export PATH="$HOME/.yarn/bin:$PATH"
 

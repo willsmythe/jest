@@ -114,7 +114,8 @@
     "trailingComma": "all"
   },
   "dependencies": {
-    "opencollective": "^1.0.3"
+    "opencollective": "^1.0.3",
+    "winston": "^3.1.0"
   },
   "collective": {
     "type": "opencollective",
