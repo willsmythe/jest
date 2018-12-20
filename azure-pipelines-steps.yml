@@ -1,0 +1,35 @@
+steps:
+- checkout: self
+  fetchDepth: 1
+
+- task: NodeTool@0
+  inputs:
+    versionSpec: '10.x'
+  displayName: 'Use Node.js 10'
+
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '2.7'
+  displayName: 'Use Python 2.7'
+
+- script: |
+    # Workaround to move source into a "jest" folder (see JEST_DIR in azure-pipelines.yml)
+    cd /
+    mv $(Build.Repository.LocalPath) $(JEST_DIR)
+    mkdir $(Build.Repository.LocalPath)
+  displayName: 'Create jest folder (workaround)'
+
+- script: yarn
+  displayName: 'Install dependencies'
+  workingDirectory: $(JEST_DIR)
+
+- script: yarn run test-ci-partial
+  displayName: 'Run tests'
+  workingDirectory: $(JEST_DIR)
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFiles: '**/reports/junit/*.xml'
+    searchFolder: $(JEST_DIR)
+    testRunTitle: 'Tests $(Agent.JobName)'
+  displayName: 'Publish test results'
