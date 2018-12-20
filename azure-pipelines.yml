@@ -27,19 +27,28 @@ jobs:
       mkdir -p $(Build.Repository.LocalPath)
     displayName: 'Create jest folder (workaround)'
 
-  - script: yarn
+  - script: |
+      yarn
+      export ycd="$(yarn cache dir)"
+      echo "Yarn cache size: $(du -mchs ${ycd})"
     displayName: 'Install dependencies'
     workingDirectory: $(JEST_DIR)
 
-  - script: yarn run test-ci-partial
+  - script: |
+      yarn run test-ci-partial
+      echo "Jest temp size: $(du -mc /tmp/jest_rt)"
     displayName: 'Run tests'
     workingDirectory: $(JEST_DIR)
 
-  - script: yarn run test-ci-partial --showConfig
-    displayName: 'Run tests (just show config'
+  - script: |
+      yarn run test-ci-partial --showConfig
+      echo "Jest temp size: $(du -mhc /tmp/jest_rt)"
+    displayName: 'Run tests (just show config)'
     workingDirectory: $(JEST_DIR)
 
-  - script: yarn run test-ci-partial
+  - script: |
+      yarn run test-ci-partial
+      echo "Jest temp size: $(du -mhc /tmp/jest_rt)"
     displayName: 'Run tests again (show benefits of caching)'
     workingDirectory: $(JEST_DIR)
 
