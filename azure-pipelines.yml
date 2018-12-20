@@ -8,6 +8,7 @@ jobs:
     # Default checkout directory is "s", but inline snapshot tests will fail due to assumption that Jest is running under a "jest" folder
     # (see packages/jest-message-util/src/index.js PATH_JEST_PACKAGES)
     JEST_DIR: $(Agent.BuildDirectory)/jest
+    YARN_CACHE: $(Agent.BuildDirectory)/.yarncache
 
   steps:
   - task: NodeTool@0
@@ -30,14 +31,14 @@ jobs:
   - script: |
       echo "nproc: $(nproc)"
       echo "$(df)"
-      yarn
+      yarn --cache-folder $(YARN_CACHE)
       echo "$(df)"
-      sudo echo "Yarn cache size: $(du -mchs $(yarn cache dir))"
+      echo "Yarn cache size: $(du -mchs $(YARN_CACHE))"
     displayName: 'Install dependencies'
     workingDirectory: $(JEST_DIR)
 
   - script: |
-      yarn run test-ci-partial --showConfig
+      echo "$(yarn run test-ci-partial --showConfig)"
       yarn run test-ci-partial
       echo "Jest temp size: $(du -mc /tmp/jest_rt)"
     displayName: 'Run tests (not -i)'
