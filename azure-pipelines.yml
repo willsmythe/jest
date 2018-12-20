@@ -1,0 +1,42 @@
+jobs:
+- job: Linux
+  pool:
+    vmImage: 'Ubuntu 16.04'
+  variables:
+    # Ensures output from Jest (run during some tests) includes ANSI escape characters so it matches snapshots
+    FORCE_COLOR: 1 
+    # Default checkout directory is "s", but inline snapshot tests will fail due to assumption that Jest is running under a "jest" folder
+    # (see packages/jest-message-util/src/index.js PATH_JEST_PACKAGES)
+    JEST_DIR: $(Agent.BuildDirectory)/jest
+
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '10.x'
+    displayName: 'Use Node.js 10'
+
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '2.7'
+    displayName: 'Use Python 2.7'
+
+  - script: |
+      # Workaround to move source into a "jest" folder (see JEST_DIR above)
+      cd /
+      mv $(Build.Repository.LocalPath) $(JEST_DIR)
+      mkdir -p $(Build.Repository.LocalPath)
+    displayName: 'Create jest folder (workaround)'
+
+  - script: yarn
+    displayName: 'Install dependencies'
+    workingDirectory: $(JEST_DIR)
+
+  - script: yarn run test-ci-partial
+    displayName: 'Run tests'
+    workingDirectory: $(JEST_DIR)
+
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFiles: '**/reports/junit/*.xml'
+      searchFolder: $(JEST_DIR)
+    displayName: 'Publish test results'
