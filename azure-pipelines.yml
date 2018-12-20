@@ -35,6 +35,14 @@ jobs:
     displayName: 'Run tests'
     workingDirectory: $(JEST_DIR)
 
+  - script: yarn run test-ci-partial --showConfig
+    displayName: 'Run tests (just show config'
+    workingDirectory: $(JEST_DIR)
+
+  - script: yarn run test-ci-partial
+    displayName: 'Run tests again (show benefits of caching)'
+    workingDirectory: $(JEST_DIR)
+
   - task: PublishTestResults@2
     inputs:
       testResultsFiles: '**/reports/junit/*.xml'
