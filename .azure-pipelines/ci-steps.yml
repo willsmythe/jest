@@ -1,11 +1,24 @@
+#
+# CI build and test steps. See azure-pipelines.yml for job details.
+# 
+
+variables:
+  # Ensures output produced by Jest for certain tests includes ANSI escape characters (needed to match snapshots)
+  FORCE_COLOR: 1
+  # Default checkout directory is "s", but inline snapshot tests will fail due to assumption that Jest is running under a "jest" folder
+  # (see packages/jest-message-util/src/index.js PATH_JEST_PACKAGES)
+  JEST_DIR: $(Agent.BuildDirectory)/jest
+
 steps:
 - checkout: self
 
+# Activate Node.js 10
 - task: NodeTool@0
   inputs:
     versionSpec: '10.x'
   displayName: 'Use Node.js 10'
 
+# Activate Python 2.7
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '2.7'
@@ -18,14 +31,17 @@ steps:
     mkdir $(Build.Repository.LocalPath)
   displayName: 'Move source into jest folder'
 
+# Run yarn to install dependencies and build
 - script: yarn
   workingDirectory: $(JEST_DIR)
   displayName: 'Install dependencies and build'
 
+# Run test-ci-partial
 - script: yarn run test-ci-partial
   workingDirectory: $(JEST_DIR)
   displayName: 'Run tests'
 
+# Publish CI test results
 - task: PublishTestResults@2
   inputs:
     testResultsFiles: '**/reports/junit/*.xml'

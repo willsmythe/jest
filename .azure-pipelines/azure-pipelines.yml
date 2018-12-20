@@ -1,18 +1,16 @@
-variables:
-  # Ensures output produced by Jest for certain tests includes ANSI escape characters (needed to match snapshot)
-  FORCE_COLOR: 1
-  # Default checkout directory is "s", but inline snapshot tests will fail due to assumption that Jest is running under a "jest" folder
-  # (see packages/jest-message-util/src/index.js PATH_JEST_PACKAGES)
-  JEST_DIR: $(Agent.BuildDirectory)/jest
+#
+# Azure Pipelines CI configuration for Linux, Windows, and macOS.
+#
 
 jobs:
-- job: Linux
+- job: Linux  
   pool:
     vmImage: ubuntu-16.04
+  
   steps:
   - template: ci-steps.yml
 
-- job: Windows
+- job: Windows  
   pool:
     vmImage: vs2017-win2016
   steps:
@@ -27,4 +25,3 @@ jobs:
   - script: brew install mercurial
     displayName: 'Install Mercurial'    
   - template: ci-steps.yml
-  
