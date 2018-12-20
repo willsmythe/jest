@@ -28,14 +28,17 @@ jobs:
     displayName: 'Create jest folder (workaround)'
 
   - script: |
-      echo "$(df -a)"
+      echo "nproc: $(nproc)"
+      echo "$(df)"
       yarn
-      echo "$(df -a)"
+      echo "$(df)"
+      export ycd=$(yarn cache dir)
       echo "Yarn cache size: $(du -mchs ${ycd})"
     displayName: 'Install dependencies'
     workingDirectory: $(JEST_DIR)
 
   - script: |
+      yarn run test-ci-partial --showConfig
       yarn run test-ci-partial
       echo "Jest temp size: $(du -mc /tmp/jest_rt)"
     displayName: 'Run tests (not -i)'
