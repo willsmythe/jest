@@ -10,7 +10,7 @@ jobs:
   pool:
     vmImage: ubuntu-16.04
   steps:
-  - template: azure-pipelines-steps.yml
+  - template: ci-steps.yml
 
 - job: Windows
   pool:
@@ -18,7 +18,7 @@ jobs:
   steps:
   - script: git config --global core.autocrlf false
     displayName: 'Clone with LF preserved'
-  - template: azure-pipelines-steps.yml
+  - template: ci-steps.yml
 
 - job: macOS
   pool:
@@ -26,4 +26,5 @@ jobs:
   steps:
   - script: brew install mercurial
     displayName: 'Install Mercurial'    
-  - template: azure-pipelines-steps.yml
+  - template: ci-steps.yml
+  
