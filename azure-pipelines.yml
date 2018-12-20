@@ -16,7 +16,13 @@ jobs:
   pool:
     vmImage: vs2017-win2016
   steps:
-  - script: |
-      git config --global core.autocrlf false
+  - script: git config --global core.autocrlf false
     displayName: 'Clone with LF preserved'
+  - template: azure-pipelines-steps.yml
+
+- job: macOS
+  pool:
+    vmImage: macos-10.13
+  steps:
+  - script: echo "$(TERM)"
   - template: azure-pipelines-steps.yml
