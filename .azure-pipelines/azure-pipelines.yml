@@ -3,21 +3,22 @@
 #
 
 jobs:
-- job: Linux  
+- job: Linux
   pool:
-    vmImage: ubuntu-16.04
-  
+    vmImage: ubuntu-16.04  
   steps:
   - template: ci-steps.yml
 
 - job: Windows  
   pool:
-    vmImage: vs2017-win2016
+    vmImage: vs2017-win2016  
   steps:
   - script: git config --global core.autocrlf false
     displayName: 'Clone with LF preserved'
+  
   - script: choco install hg
     displayName: 'Install Mercurial'
+  
   - template: ci-steps.yml
 
 - job: macOS
@@ -26,6 +27,7 @@ jobs:
   steps:
   - script: brew install mercurial
     displayName: 'Install Mercurial'    
+
   - template: ci-steps.yml
 
 variables:
