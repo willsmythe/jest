@@ -39,9 +39,10 @@ jobs:
 
   - script: |
       echo "$(yarn run test-ci-partial --showConfig)"
+      echo "$(yarn run test-ci-partial --listTests)"
       yarn run test-ci-partial
-      echo "Jest temp size: $(du -mc /tmp/jest_rt)"
-    displayName: 'Run tests (not -i)'
+      echo "Jest temp size: $(du -ch /tmp/jest_rt)"
+    displayName: 'Run tests'
     workingDirectory: $(JEST_DIR)
 
   #- script: |
