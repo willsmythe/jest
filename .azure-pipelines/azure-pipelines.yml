@@ -16,6 +16,8 @@ jobs:
   steps:
   - script: git config --global core.autocrlf false
     displayName: 'Clone with LF preserved'
+  - script: choco install hg
+    displayName: 'Install Mercurial'
   - template: ci-steps.yml
 
 - job: macOS
