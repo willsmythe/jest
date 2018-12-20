@@ -32,8 +32,7 @@ jobs:
       echo "$(df)"
       yarn
       echo "$(df)"
-      export ycd=$(yarn cache dir)
-      echo "Yarn cache size: $(du -mchs ${ycd})"
+      sudo echo "Yarn cache size: $(du -mchs $(yarn cache dir))"
     displayName: 'Install dependencies'
     workingDirectory: $(JEST_DIR)
 
