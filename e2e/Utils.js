@@ -137,7 +137,7 @@ export const createEmptyPackage = (
 };
 
 export const extractSummary = (stdout: string) => {
-  const match = stdout.match(
+  const match = stdout.replace(/(?:\\[rn])+/g, '\n').match(
     /Test Suites:.*\nTests.*\nSnapshots.*\nTime.*(\nRan all test suites)*.*\n*$/gm,
   );
   if (!match) {
@@ -171,7 +171,7 @@ const sortTests = (stdout: string) =>
       }
       return tests;
     }, [])
-    .sort(([a], [b]) => (a > b ? 1 : -1))
+    .sort(([a], [b]) => (a > b ? 1 : -1)) .sort(([a], [b]) => (a > b ? 1 : -1))
     .reduce(
       (array, lines = []) =>
         lines.length > 1 ? array.concat(lines, '') : array.concat(lines),
