@@ -6,8 +6,7 @@
 module.exports = Object.assign({}, require('./jest.config'), {
   coverageReporters: ['json'],
   reporters: [
-    'jest-dot-reporter'
     //['jest-junit', {output: 'reports/junit/js-test-results.xml'}],
-    //['jest-silent-reporter', {useDots: true}],
+    ['jest-silent-reporter', {useDots: true}],
   ],
 });
