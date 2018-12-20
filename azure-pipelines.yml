@@ -38,20 +38,20 @@ jobs:
   - script: |
       yarn run test-ci-partial
       echo "Jest temp size: $(du -mc /tmp/jest_rt)"
-    displayName: 'Run tests'
+    displayName: 'Run tests (not -i)'
     workingDirectory: $(JEST_DIR)
 
-  - script: |
-      yarn run test-ci-partial --showConfig
-      echo "Jest temp size: $(du -mhc /tmp/jest_rt)"
-    displayName: 'Run tests (just show config)'
-    workingDirectory: $(JEST_DIR)
+  #- script: |
+  #    yarn run test-ci-partial --showConfig
+  #    echo "Jest temp size: $(du -mhc /tmp/jest_rt)"
+  #  displayName: 'Run tests (just show config)'
+  #  workingDirectory: $(JEST_DIR)
 
-  - script: |
-      yarn run test-ci-partial
-      echo "Jest temp size: $(du -mhc /tmp/jest_rt)"
-    displayName: 'Run tests again (show benefits of caching)'
-    workingDirectory: $(JEST_DIR)
+  #- script: |
+  #    yarn run test-ci-partial
+  #    echo "Jest temp size: $(du -mhc /tmp/jest_rt)"
+  #  displayName: 'Run tests again (show benefits of caching)'
+  #  workingDirectory: $(JEST_DIR)
 
   - task: PublishTestResults@2
     inputs:
