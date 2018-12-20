@@ -11,24 +11,25 @@ steps:
     versionSpec: '2.7'
   displayName: 'Use Python 2.7'
 
+# Workaround to move repo source files into a "jest" folder (see JEST_DIR in azure-pipelines.yml)
 - script: |
-    # Workaround to move repo source files into a "jest" folder (see JEST_DIR in azure-pipelines.yml)
     cd /
     mv $(Build.Repository.LocalPath) $(JEST_DIR)
     mkdir $(Build.Repository.LocalPath)
   displayName: 'Move source into jest folder'
 
 - script: yarn
-  displayName: 'Install dependencies and build'
   workingDirectory: $(JEST_DIR)
+  displayName: 'Install dependencies and build'
 
 - script: yarn run test-ci-partial
-  displayName: 'Run tests'
   workingDirectory: $(JEST_DIR)
+  displayName: 'Run tests'
 
 - task: PublishTestResults@2
   inputs:
     testResultsFiles: '**/reports/junit/*.xml'
     searchFolder: $(JEST_DIR)
-    testRunTitle: 'Tests $(Agent.JobName)'
+    testRunTitle: 'Tests $(Agent.OS)'
   displayName: 'Publish test results'
+  condition: succeededOrFailed()
