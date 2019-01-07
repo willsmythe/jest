@@ -14,6 +14,7 @@ import execa, {sync as spawnSync} from 'execa';
 import {Writable} from 'readable-stream';
 const stripAnsi = require('strip-ansi');
 import {normalizeIcons} from './Utils';
+import {sync as realpath} from 'realpath-native';
 
 const JEST_PATH = path.resolve(__dirname, '../packages/jest-cli/bin/jest.js');
 
@@ -52,7 +53,7 @@ export default function runJest(
   const env = Object.assign({}, process.env, {FORCE_COLOR: 0});
   if (options.nodePath) env['NODE_PATH'] = options.nodePath;
   const result = spawnSync(JEST_PATH, args || [], {
-    cwd: dir,
+    cwd: realpath(dir),
     env,
     reject: false,
   });
