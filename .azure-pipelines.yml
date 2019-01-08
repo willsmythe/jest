@@ -16,9 +16,7 @@ jobs:
     VSTS_OVERWRITE_TEMP: true
   steps:
   - script: git config --global core.autocrlf false
-    displayName: 'Clone with LF preserved'
-  - script: choco install hg
-    displayName: 'Install Mercurial'  
+    displayName: 'Set Git core.autocrlf to preserve LF endings on check out'
   - template: .azure-pipelines-steps.yml
 
 - job: macOS
