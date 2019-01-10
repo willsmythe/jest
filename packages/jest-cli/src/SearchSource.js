@@ -19,6 +19,7 @@ import testPathPatternToRegExp from './testPathPatternToRegexp';
 import {escapePathForRegex} from 'jest-regex-util';
 import {replaceRootDirInPath} from 'jest-config';
 import {buildSnapshotResolver} from 'jest-snapshot';
+import {sync as realpath} from 'realpath-native';
 
 type SearchResult = {|
   noSCM?: boolean,
@@ -182,11 +183,12 @@ export default class SearchSource {
   }
 
   findTestsByPaths(paths: Array<Path>): SearchResult {
+    const cwd = realpath(process.cwd());
     return {
       tests: toTests(
         this._context,
         paths
-          .map(p => path.resolve(process.cwd(), p))
+          .map(p => path.resolve(cwd, p))
           .filter(this.isTestFilePath.bind(this)),
       ),
     };
@@ -197,7 +199,10 @@ export default class SearchSource {
     collectCoverage: boolean,
   ): SearchResult {
     if (Array.isArray(paths) && paths.length) {
-      const resolvedPaths = paths.map(p => path.resolve(process.cwd(), p));
+      const cwd = realpath(process.cwd());
+      const resolvedPaths = paths.map(p =>
+        path.resolve(cwd, p),
+      );
       return this.findRelatedTests(new Set(resolvedPaths), collectCoverage);
     }
     return {tests: []};
