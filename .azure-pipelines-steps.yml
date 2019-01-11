@@ -33,11 +33,17 @@ steps:
 - script: yarn
   workingDirectory: $(JEST_DIR)
   displayName: 'Install dependencies and build'
+  env:
+    TEMP: d:\temp
 
 # Run test-ci-partial
-- script: yarn run test-ci-partial
+- bash: |
+    yarn run test-ci-partial --showConfig
+    yarn run test-ci-partial
   workingDirectory: $(JEST_DIR)
   displayName: 'Run tests'
+  env:
+    TEMP: d:\temp
 
 # Publish CI test results
 - task: PublishTestResults@2
