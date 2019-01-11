@@ -30,7 +30,9 @@ steps:
   displayName: 'Move source into jest folder'
 
 # Run yarn to install dependencies and build
-- script: yarn
+- script: |
+    mkdir d:\temp
+    yarn --verbose
   workingDirectory: $(JEST_DIR)
   displayName: 'Install dependencies and build'
   env:
