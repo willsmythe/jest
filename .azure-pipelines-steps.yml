@@ -6,6 +6,8 @@
 steps:
 - checkout: self
 
+- script: node --version
+
 # Ensure Node.js 10 is active
 - task: NodeTool@0
   inputs:
@@ -19,7 +21,9 @@ steps:
   displayName: 'Use Python 2.7'
 
 # Workaround to move source files under a "jest" folder (see .azure-pipelines.yml for details)
-- script: |
+- script: |    
+    node --version
+    dir C:\hostedtoolcache\windows\node
     cd /
     mv $(Build.Repository.LocalPath) $(JEST_DIR)
     mkdir $(Build.Repository.LocalPath)
