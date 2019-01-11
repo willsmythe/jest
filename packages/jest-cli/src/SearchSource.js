@@ -200,9 +200,7 @@ export default class SearchSource {
   ): SearchResult {
     if (Array.isArray(paths) && paths.length) {
       const cwd = realpath(process.cwd());
-      const resolvedPaths = paths.map(p =>
-        path.resolve(cwd, p),
-      );
+      const resolvedPaths = paths.map(p => path.resolve(cwd, p));
       return this.findRelatedTests(new Set(resolvedPaths), collectCoverage);
     }
     return {tests: []};
