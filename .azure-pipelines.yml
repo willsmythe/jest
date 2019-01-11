@@ -10,6 +10,8 @@ jobs:
   - template: .azure-pipelines-steps.yml
 
 - job: Windows
+  variables:
+    YARN_CACHE_FOLDER: d:\yarn-cache
   pool:
     vmImage: vs2017-win2016
   steps:
@@ -18,6 +20,9 @@ jobs:
       git config --global core.symlinks true
     displayName: 'Preserve LF endings and symbolic links on check out'
   - template: .azure-pipelines-steps.yml
+  - script: |
+      dir $(YARN_CACHE_FOLDER)
+      dir $(TEMP)
 
 - job: macOS
   pool:
