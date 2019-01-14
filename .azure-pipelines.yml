@@ -20,7 +20,7 @@ jobs:
   - script: |
       choco install hg
       echo '##vso[task.setvariable variable=PATH;]%PATH%'
-      displayName: 'Install Mercurial'
+    displayName: 'Install Mercurial'
   - script: hg --version      
   - template: .azure-pipelines-steps.yml
 
