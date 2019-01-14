@@ -15,7 +15,7 @@ export function isJestCircusRun() {
 
 export function skipSuiteOnJasmine() {
   if (!isJestCircusRun()) {
-    test.only('does not work on Jasmine', () => {
+  test.only('does not work on Jasmine', () => {
       console.warn('[SKIP] Does not work on Jasmine');
     });
   }
@@ -30,9 +30,9 @@ export function skipSuiteOnJestCircus() {
 }
 
 export function skipSuiteOnWindows() {
-  if (process.platform === 'win32') {
-    test.only('does not work on Windows', () => {
-      console.warn('[SKIP] Does not work on Windows');
-    });
-  }
+  //if (process.platform === 'win32') {
+  //  test.only('does not work on Windows', () => {
+  //    console.warn('[SKIP] Does not work on Windows');
+  //  });
+  //}
 }
