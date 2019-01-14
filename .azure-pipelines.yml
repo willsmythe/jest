@@ -19,7 +19,7 @@ jobs:
     displayName: 'Preserve LF endings and symbolic links on check out'
   - script: |
       choco install hg
-      echo '##vso[task.setvariable variable=PATH;]%PATH%'
+      echo '##vso[task.setvariable variable=PATH]C:\Program Files\Mercurial;%PATH%'
     displayName: 'Install Mercurial'
   - script: hg --version      
   - template: .azure-pipelines-steps.yml
