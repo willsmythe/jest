@@ -39,7 +39,7 @@ it('prints message about flag on slow tests', async () => {
   expect(wrap(textAfterTest)).toMatchSnapshot();
 });
 
-it('prints message about flag on forceExit', async () => {
+/*it('prints message about flag on forceExit', async () => {
   const {stderr} = await until(
     'detect-open-handles',
     ['outside', '--forceExit'],
@@ -81,4 +81,4 @@ it('prints out info about open handlers from inside tests', async () => {
   const textAfterTest = getTextAfterTest(stderr);
 
   expect(wrap(textAfterTest)).toMatchSnapshot();
-});
+});*/

@@ -122,13 +122,20 @@ export const until = async function(
   const env = {...process.env, FORCE_COLOR: 0};
   if (options.nodePath) env['NODE_PATH'] = options.nodePath;
 
+  //console.log(`Run, looking for ${text}`);
+
   const jestPromise = execa(JEST_PATH, args || [], {
     cwd: dir,
     env,
-    reject: false,
+    reject: true,
     // this should never take more than 5-6 seconds, bailout after 30
     timeout: 30000,
   });
+
+//  console.log(JSON.stringify(jestPromise.pid, null, 2));
+//  console.log(JSON.stringify(jestPromise.spawnargs, null, 2));
+
+console.log(`!! 0a ${text}`);
 
   jestPromise.stderr.pipe(
     new Writable({
@@ -136,15 +143,26 @@ export const until = async function(
         const output = chunk.toString('utf8');
 
         if (output.includes(text)) {
-          jestPromise.kill();
+            console.log(`!! 1 - Found: ${text}\n!!kill`);
+            jestPromise.kill();
+            console.log(`!! 2 - ${text}`);
+            console.log(`!! 3 - ${text}`);
+            return callback();
+            console.log(`!! 4 - ${text}`);
+        } else {
+            callback();
+  //          console.log(`!! Didn't find: ${text}, instead: ${output}\n!!`);
         }
-
-        callback();
       },
     }),
   );
 
+  try {
+    console.log(`!! 0b ${text}`);
   const result = await jestPromise;
+  console.log(`!! 0c ${text}`);
+
+  //console.log(`!! after await: ${text}`);
 
   // For compat with cross-spawn
   result.status = result.code;
@@ -155,4 +173,7 @@ export const until = async function(
   if (options.stripAnsi) result.stderr = stripAnsi(result.stderr);
 
   return result;
+  } catch (e) {
+      console.log(`!! exception: ${e.message}: ${text}`);
+  }
 };
