@@ -122,48 +122,53 @@ export const until = async function(
   const env = {...process.env, FORCE_COLOR: 0};
   if (options.nodePath) env['NODE_PATH'] = options.nodePath;
 
-  const jestPromise = execa(JEST_PATH, args || [], {
-    cwd: dir,
-    env,
-    reject: false,
-    // this should never take more than 5-6 seconds, bailout after 30
-    timeout: 30000
-  });
+    const proc = execa(JEST_PATH, args || [], {
+        cwd: dir,
+        env,
+        reject: true,
+        // this should never take more than 5-6 seconds, bailout after 30
+        timeout: 35000
+    });
+
+    return new Promise((resolve, reject) => {
+        proc.addListener('error', () => {
+            console.log(`!! 2 - ${text}`);
+            reject("boo");
+        });
+
+        proc.addListener('exit', () => {
+            console.log(`!! 1 - ${text}`);
+            let result = proc;
+            result.status = result.code;
+
+            result.stdout = normalizeIcons(result.stdout);
+            if (options.stripAnsi) result.stdout = stripAnsi(result.stdout);
+            result.stderr = normalizeIcons(result.stderr);
+            if (options.stripAnsi) result.stderr = stripAnsi(result.stderr);
+
+            resolve(result);
+        });
+
+        proc.stderr.pipe(
+            new Writable({
+              write(chunk, encoding, callback) {
+                const output = chunk.toString('utf8');
+        
+                if (output.includes(text)) {
+                    console.log(`!! 2 - Found: ${text}; kill`);
+                    jestPromise.kill();
+                    console.log(`!! 3 - ${text}`);
+                    callback();
+                    console.log(`!! 4 - ${text}`);
+                } else {
+                    callback();
+                }
+              },
+            }),
+        );
+    });
 
 //  console.log(JSON.stringify(jestPromise.pid, null, 2));
 //  console.log(JSON.stringify(jestPromise.spawnargs, null, 2));
-
-console.log(`!! 0 ${text}`);
-
-  jestPromise.stderr.pipe(
-    new Writable({
-      write(chunk, encoding, callback) {
-        const output = chunk.toString('utf8');
-
-        if (output.includes(text)) {
-            console.log(`!! 2 - Found: ${text}; kill`);
-            jestPromise.kill();
-            console.log(`!! 3 - ${text}`);
-            callback();
-            console.log(`!! 4 - ${text}`);
-        } else {
-            callback();
-        }
-      },
-    }),
-  );
-
-  console.log(`!! 1 - ${text}`);
-  const result = await jestPromise;
-  console.log(`!! 5 - ${text}`);
-
-  // For compat with cross-spawn
-  result.status = result.code;
-
-  result.stdout = normalizeIcons(result.stdout);
-  if (options.stripAnsi) result.stdout = stripAnsi(result.stdout);
-  result.stderr = normalizeIcons(result.stderr);
-  if (options.stripAnsi) result.stderr = stripAnsi(result.stderr);
-
-  return result;
+    console.log(`!! 0 ${text}`);
 };
