@@ -10,8 +10,8 @@ jobs:
       - template: .azure-pipelines-steps.yml
 
   - job: Windows
-    pool:
-      vmImage: 'Hosted Windows 2019 with VS2019'
+#    pool:
+#      vmImage: 'Hosted Windows 2019 with VS2019'
     steps:
       - script: |
           git config --global core.autocrlf false
