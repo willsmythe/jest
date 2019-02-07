@@ -21,7 +21,7 @@ type RunJestOptions = {
   nodePath?: string,
   skipPkgJsonCheck?: boolean, // don't complain if can't find package.json
   stripAnsi?: boolean, // remove colors from stdout and stderr,
-  timeout?: number // kill the Jest process after X milliseconds
+  timeout?: number, // kill the Jest process after X milliseconds
 };
 
 // return the result of the spawned process:
@@ -32,16 +32,16 @@ export default function runJest(
   args?: Array<string>,
   options: RunJestOptions = {},
 ) {
-    return normalizeResult(spawnJest(dir, args, options));
+  return normalizeResult(spawnJest(dir, args, options), options);
 }
 
 // Spawns Jest and returns either a Promise (if spawnAsync is true) or the completed child process
 function spawnJest(
-    dir: string,
-    args?: Array<string>,
-    options: RunJestOptions = {},
-    spawnAsync: boolean
-  ) {
+  dir: string,
+  args?: Array<string>,
+  options: RunJestOptions = {},
+  spawnAsync: boolean,
+) {
   const isRelative = !path.isAbsolute(dir);
 
   if (isRelative) {
@@ -68,13 +68,14 @@ function spawnJest(
     cwd: dir,
     env,
     reject: false,
-    timeout: options.timeout || 0
+    timeout: options.timeout || 0,
   };
 
-  return (runAsync ? execa : sync)(process.execPath, spawnArgs, spawnOptions);
+  return (spawnAsync ? execa : execa.sync)
+    (process.execPath, spawnArgs, spawnOptions);
 }
 
-function normalizeResult(result) {
+function normalizeResult(result, options) {
   // For compat with cross-spawn
   result.status = result.code;
 
@@ -82,6 +83,8 @@ function normalizeResult(result) {
   if (options.stripAnsi) result.stdout = stripAnsi(result.stdout);
   result.stderr = normalizeIcons(result.stderr);
   if (options.stripAnsi) result.stderr = stripAnsi(result.stderr);
+
+  return result;
 }
 
 // Runs `jest` with `--json` option and adds `json` property to the result obj.
@@ -133,5 +136,5 @@ export const until = async function(
     }),
   );
 
-  return normalizeResult(await jestPromise);
+  return normalizeResult(await jestPromise, options);
 };
