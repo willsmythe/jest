@@ -18,6 +18,7 @@ jobs:
           git config --global core.symlinks true
         displayName: 'Preserve LF endings and symbolic links on check out'
       - script: npm install -g yarn@1.9.4
+      - script: npm install --global --production windows-build-tools
       - template: .azure-pipelines-steps.yml
 
   - job: macOS
