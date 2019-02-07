@@ -19,6 +19,8 @@ jobs:
         displayName: 'Preserve LF endings and symbolic links on check out'
       - script: npm install -g yarn@1.9.4
       - script: choco install visualstudio2017-workload-vctools
+      - script: npm config set msvs_version 2017
+      - script: npm config set python C:\hostedtoolcache\windows\Python\2.7.14\x64
       - template: .azure-pipelines-steps.yml
 
   - job: macOS
