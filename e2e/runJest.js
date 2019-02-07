@@ -20,7 +20,8 @@ const JEST_PATH = path.resolve(__dirname, '../packages/jest-cli/bin/jest.js');
 type RunJestOptions = {
   nodePath?: string,
   skipPkgJsonCheck?: boolean, // don't complain if can't find package.json
-  stripAnsi?: boolean, // remove colors from stdout and stderr
+  stripAnsi?: boolean, // remove colors from stdout and stderr,
+  timeout?: number // kill the Jest process after X milliseconds
 };
 
 // return the result of the spawned process:
@@ -31,6 +32,16 @@ export default function runJest(
   args?: Array<string>,
   options: RunJestOptions = {},
 ) {
+    return normalizeResult(spawnJest(dir, args, options));
+}
+
+// Spawns Jest and returns either a Promise (if spawnAsync is true) or the completed child process
+function spawnJest(
+    dir: string,
+    args?: Array<string>,
+    options: RunJestOptions = {},
+    spawnAsync: boolean
+  ) {
   const isRelative = !path.isAbsolute(dir);
 
   if (isRelative) {
@@ -51,12 +62,19 @@ export default function runJest(
 
   const env = {...process.env, FORCE_COLOR: 0};
   if (options.nodePath) env['NODE_PATH'] = options.nodePath;
-  const result = spawnSync(JEST_PATH, args || [], {
+
+  const spawnArgs = [JEST_PATH, ...(args || [])];
+  const spawnOptions = {
     cwd: dir,
     env,
     reject: false,
-  });
+    timeout: options.timeout || 0
+  };
 
+  return (runAsync ? execa : sync)(process.execPath, spawnArgs, spawnOptions);
+}
+
+function normalizeResult(result) {
   // For compat with cross-spawn
   result.status = result.code;
 
@@ -64,8 +82,6 @@ export default function runJest(
   if (options.stripAnsi) result.stdout = stripAnsi(result.stdout);
   result.stderr = normalizeIcons(result.stderr);
   if (options.stripAnsi) result.stderr = stripAnsi(result.stderr);
-
-  return result;
 }
 
 // Runs `jest` with `--json` option and adds `json` property to the result obj.
@@ -101,34 +117,7 @@ export const until = async function(
   text: string,
   options: RunJestOptions = {},
 ) {
-  const isRelative = !path.isAbsolute(dir);
-
-  if (isRelative) {
-    dir = path.resolve(__dirname, dir);
-  }
-
-  const localPackageJson = path.resolve(dir, 'package.json');
-  if (!options.skipPkgJsonCheck && !fs.existsSync(localPackageJson)) {
-    throw new Error(
-      `
-      Make sure you have a local package.json file at
-        "${localPackageJson}".
-      Otherwise Jest will try to traverse the directory tree and find the
-      the global package.json, which will send Jest into infinite loop.
-    `,
-    );
-  }
-
-  const env = {...process.env, FORCE_COLOR: 0};
-  if (options.nodePath) env['NODE_PATH'] = options.nodePath;
-
-  const jestPromise = execa(JEST_PATH, args || [], {
-    cwd: dir,
-    env,
-    reject: false,
-    // this should never take more than 5-6 seconds, bailout after 30
-    timeout: 30000,
-  });
+  const jestPromise = spawnJest(dir, args, {timeout: 30000, ...options}, true);
 
   jestPromise.stderr.pipe(
     new Writable({
@@ -144,15 +133,5 @@ export const until = async function(
     }),
   );
 
-  const result = await jestPromise;
-
-  // For compat with cross-spawn
-  result.status = result.code;
-
-  result.stdout = normalizeIcons(result.stdout);
-  if (options.stripAnsi) result.stdout = stripAnsi(result.stdout);
-  result.stderr = normalizeIcons(result.stderr);
-  if (options.stripAnsi) result.stderr = stripAnsi(result.stderr);
-
-  return result;
+  return normalizeResult(await jestPromise);
 };
