@@ -18,9 +18,7 @@ jobs:
           git config --global core.symlinks true
         displayName: 'Preserve LF endings and symbolic links on check out'
       - script: npm install -g yarn@1.9.4
-      - script: choco install visualstudio2017-workload-vctools
-      - script: npm config set msvs_version 2017
-      - script: npm config set python C:\hostedtoolcache\windows\Python\2.7.14\x64
+      - script: mklink "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\MSBuild\15.0\Bin\MSBuild.exe" "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\MSBuild\Current\Bin\MSBuild.exe"
       - template: .azure-pipelines-steps.yml
 
   - job: macOS
