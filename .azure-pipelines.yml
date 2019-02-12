@@ -20,6 +20,7 @@ jobs:
       - script: npm install -g yarn@1.9.4
       - script: |
           echo %cd%
+          dir
           scripts/msbuildVS2019SymLink.bat
       - template: .azure-pipelines-steps.yml
 
