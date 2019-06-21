@@ -6,6 +6,16 @@ steps:
   - checkout: self
     path: jest
 
+  - task: RestoreCache@0
+    inputs:
+      path: '$(Build.SourcesDirectory)/node_modules'
+      key: 'jest_node10_$(Agent.OS)'
+
+  - task: RestoreCache@0
+    inputs:
+      path: '$(Build.SourcesDirectory)/website/node_modules'
+      key: 'jest_website_node10_$(Agent.OS)'
+
   # Ensure Node.js 10 is active
   - task: NodeTool@0
     inputs:
@@ -28,14 +38,26 @@ steps:
   - script: node scripts/build
     displayName: 'Build'
 
+  # TODO: move these prior to the Build step?
+
+  - task: SaveCache@0
+    inputs:
+      path: '$(Build.SourcesDirectory)/node_modules'
+      key: 'jest_node10_$(Agent.OS)'
+
+  - task: SaveCache@0
+    inputs:
+      path: '$(Build.SourcesDirectory)/website/node_modules'
+      key: 'jest_website_node10_$(Agent.OS)'    
+
   # Run test-ci-partial
   - script: yarn run test-ci-partial
     displayName: 'Run tests'
 
   # Publish CI test results
-  - task: PublishTestResults@2
-    inputs:
-      testResultsFiles: '**/reports/junit/*.xml'
-      testRunTitle: 'CI Tests $(Agent.OS)'
-    displayName: 'Publish test results'
-    condition: succeededOrFailed()
+  # - task: PublishTestResults@2
+  #   inputs:
+  #     testResultsFiles: '**/reports/junit/*.xml'
+  #     testRunTitle: 'CI Tests $(Agent.OS)'
+  #   displayName: 'Publish test results'
+  #   condition: succeededOrFailed()
