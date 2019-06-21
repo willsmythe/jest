@@ -51,8 +51,8 @@ steps:
       key: 'jest_website_node10_$(Agent.OS)'    
 
   # Run test-ci-partial
-  - script: yarn run test-ci-partial
-    displayName: 'Run tests'
+ # - script: yarn run test-ci-partial
+ #   displayName: 'Run tests'
 
   # Publish CI test results
   # - task: PublishTestResults@2
