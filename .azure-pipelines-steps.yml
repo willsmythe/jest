@@ -8,13 +8,19 @@ steps:
 
   - task: RestoreCache@0
     inputs:
-      path: '$(Build.SourcesDirectory)/node_modules'
-      key: 'jest_node10_$(Agent.OS)'
+      path: '$(Build.SourcesDirectory)/../cache'
+      key: 'jest_tar_node10_$(Agent.OS)'
 
-  - task: RestoreCache@0
-    inputs:
-      path: '$(Build.SourcesDirectory)/website/node_modules'
-      key: 'jest_website_node10_$(Agent.OS)'
+  - bash: |
+      if test -f "../cache/cache.tar"; then
+        tar -xvfp ../cache/cache.tar -C . --same-owner
+      fi
+    displayName: Extract cache tar
+
+  # - task: RestoreCache@0
+  #   inputs:
+  #     path: '$(Build.SourcesDirectory)/website/node_modules'
+  #     key: 'jest_website_node10_$(Agent.OS)'
 
   # Ensure Node.js 10 is active
   - task: NodeTool@0
@@ -40,15 +46,20 @@ steps:
 
   # TODO: move these prior to the Build step?
 
-  - task: SaveCache@0
-    inputs:
-      path: '$(Build.SourcesDirectory)/node_modules'
-      key: 'jest_node10_$(Agent.OS)'
+  - bash: |
+      mkdir -p ../cache
+      tar -cvpf ../cache/cache.tar ./node_modules
+    displayName: Create cache tar
 
   - task: SaveCache@0
     inputs:
-      path: '$(Build.SourcesDirectory)/website/node_modules'
-      key: 'jest_website_node10_$(Agent.OS)'    
+      path: '$(Build.SourcesDirectory)/../cache'
+      key: 'jest_tar_node10_$(Agent.OS)'
+
+  # - task: SaveCache@0
+  #   inputs:
+  #     path: '$(Build.SourcesDirectory)/website/node_modules'
+  #     key: 'jest_website_node10_$(Agent.OS)'    
 
   # Run test-ci-partial
  # - script: yarn run test-ci-partial
