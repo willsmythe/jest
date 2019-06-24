@@ -14,7 +14,7 @@ steps:
   - bash: |
       if test -f "../cache/cache.tar"; then
         tar -xvpf ../cache/cache.tar -C .
-        ls -la .
+        echo "$(ls -la ./node_modules)"
         du ./node_modules
       fi
     displayName: Extract cache tar
@@ -49,6 +49,7 @@ steps:
   # TODO: move these prior to the Build step?
 
   - bash: |
+      du ./node_modules
       mkdir -p ../cache
       tar -cvpf ../cache/cache.tar ./node_modules
     displayName: Create cache tar
