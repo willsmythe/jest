@@ -13,7 +13,7 @@ steps:
 
   - bash: |
       if test -f "../cache/cache.tar"; then
-        tar -xvpf ../cache/cache.tar -C . --same-owner
+        tar -xvpf ../cache/cache.tar -C .
         ls -la .
         du ./node_modules
       fi
