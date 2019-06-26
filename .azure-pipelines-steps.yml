@@ -6,7 +6,7 @@ steps:
   - checkout: self
     path: jest
 
-  - bash: |
+  - script: |
       git config core.autocrlf false
       git config core.symlinks true
       git reset HEAD --hard
