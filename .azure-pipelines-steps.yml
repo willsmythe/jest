@@ -6,23 +6,16 @@ steps:
   - checkout: self
     path: jest
 
-  - task: RestoreCache@0
-    inputs:
-      path: '$(Build.SourcesDirectory)/../cache'
-      key: 'jest_tar_node10_$(Agent.OS)'
-
   - bash: |
-      if test -f "../cache/cache.tar"; then
-        tar -xpf ../cache/cache.tar -C .
-        echo "$(ls -la ./node_modules)"
-        du -s ./node_modules
-      fi
-    displayName: Extract cache tar
+      git config core.autocrlf false
+      git config core.symlinks true
+      git reset HEAD --hard
+    displayName: Preserve LF endings and symbolic links
 
-  # - task: RestoreCache@0
-  #   inputs:
-  #     path: '$(Build.SourcesDirectory)/website/node_modules'
-  #     key: 'jest_website_node10_$(Agent.OS)'
+  - task: Cache@0
+    inputs:
+      path: '$(Build.SourcesDirectory)/node_modules'
+      key: 'jest2_node10_$(Agent.OS)'
 
   # Ensure Node.js 10 is active
   - task: NodeTool@0
@@ -46,25 +39,7 @@ steps:
   - script: node scripts/build
     displayName: 'Build'
 
-  # TODO: move these prior to the Build step?
-
-  - bash: |
-      du -s ./node_modules
-      mkdir -p ../cache
-      tar -cpf ../cache/cache.tar ./node_modules
-    displayName: Create cache tar
-
-  - task: SaveCache@0
-    inputs:
-      path: '$(Build.SourcesDirectory)/../cache'
-      key: 'jest_tar_node10_$(Agent.OS)'
-
-  # - task: SaveCache@0
-  #   inputs:
-  #     path: '$(Build.SourcesDirectory)/website/node_modules'
-  #     key: 'jest_website_node10_$(Agent.OS)'    
-
-  # Run test-ci-partial
+# Run test-ci-partial
  # - script: yarn run test-ci-partial
  #   displayName: 'Run tests'
 
