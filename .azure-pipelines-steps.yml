@@ -6,6 +6,17 @@ steps:
   - checkout: self
     path: jest
 
+  - bash: |
+      git config core.autocrlf false
+      git config core.symlinks true
+      git reset HEAD --hard
+    displayName: Preserve LF endings and symbolic links
+
+  - task: Cache@0
+    inputs:
+      path: '$(Build.SourcesDirectory)/node_modules'
+      key: 'jest2_node10_$(Agent.OS)'
+
   # Ensure Node.js 10 is active
   - task: NodeTool@0
     inputs:
@@ -28,14 +39,14 @@ steps:
   - script: node scripts/build
     displayName: 'Build'
 
-  # Run test-ci-partial
-  - script: yarn run test-ci-partial
-    displayName: 'Run tests'
+# Run test-ci-partial
+ # - script: yarn run test-ci-partial
+ #   displayName: 'Run tests'
 
   # Publish CI test results
-  - task: PublishTestResults@2
-    inputs:
-      testResultsFiles: '**/reports/junit/*.xml'
-      testRunTitle: 'CI Tests $(Agent.OS)'
-    displayName: 'Publish test results'
-    condition: succeededOrFailed()
+  # - task: PublishTestResults@2
+  #   inputs:
+  #     testResultsFiles: '**/reports/junit/*.xml'
+  #     testRunTitle: 'CI Tests $(Agent.OS)'
+  #   displayName: 'Publish test results'
+  #   condition: succeededOrFailed()
