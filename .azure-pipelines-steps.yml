@@ -12,7 +12,7 @@ steps:
       git reset HEAD --hard
     displayName: Preserve LF endings and symbolic links
 
-  - task: Cache@0
+  - task: Cache@1
     inputs:
       path: '$(Build.SourcesDirectory)/node_modules'
       key: 'jest2_node10_$(Agent.OS)'
