@@ -3,32 +3,26 @@
 #
 
 jobs:
-  # - job: Linux
-  #   pool:
-  #     vmImage: ubuntu-16.04
-  #   steps:
-  #     - template: .azure-pipelines-steps.yml
-
-  # - job: Windows
-  #   pool:
-  #     vmImage: vs2017-win2016
-  #   steps:
-  #     - template: .azure-pipelines-steps.yml
-
-  - job: Windows_private
+  - job: Linux
     pool:
-      name: CachingPrivateJune
+      vmImage: ubuntu-16.04
     steps:
       - template: .azure-pipelines-steps.yml
 
-  # - job: macOS
-  #   pool:
-  #     vmImage: macos-10.13
-  #   steps:
-  #     # This step can be removed once Mercurial gets installed on the macOS image. See https://github.com/Microsoft/azure-pipelines-image-generation/issues/604
-  #     - script: HOMEBREW_NO_AUTO_UPDATE=1 brew install mercurial
-  #       displayName: 'Install Mercurial'
-  #     - template: .azure-pipelines-steps.yml
+  - job: Windows
+    pool:
+      vmImage: vs2017-win2016
+    steps:
+      - template: .azure-pipelines-steps.yml
+
+  - job: macOS
+    pool:
+      vmImage: macos-10.13
+    steps:
+      # This step can be removed once Mercurial gets installed on the macOS image. See https://github.com/Microsoft/azure-pipelines-image-generation/issues/604
+      - script: HOMEBREW_NO_AUTO_UPDATE=1 brew install mercurial
+        displayName: 'Install Mercurial'
+      - template: .azure-pipelines-steps.yml
 
 variables:
   # Used by chalk. Ensures output from Jest includes ANSI escape characters that are needed to match test snapshots.
@@ -36,3 +30,5 @@ variables:
 
   # Ensures the handful of tests that should be skipped during CI are
   CI: true
+
+  YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.cache/yarn
