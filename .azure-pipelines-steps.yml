@@ -22,8 +22,7 @@ steps:
 
       export CACHE_PATH=$(mktemp --tmpdir=$PIPELINE_WORKSPACE -d)
 
-      if ["$AGENT_OS" == "Windows_NT"]
-      then
+      if [ "$AGENT_OS" == "Windows_NT" ]; then
         export p="$(Pipeline.Workspace)"
         echo "p is $p"
         export CACHE_PATH="$(Pipeline.Workspace)\$(basename $CACHE_PATH)"
@@ -35,8 +34,10 @@ steps:
     displayName: Pre-cache step
 
   - bash: printenv
-  - script: set
-    condition: eq(variables.AGENT_OS, 'Windows_NT')
+  - script: |
+      set > a.txt
+      type a.txt
+    condition: eq(variables['Agent.OS'], 'Windows_NT')
 
   - task: CacheBeta@0
     inputs:
