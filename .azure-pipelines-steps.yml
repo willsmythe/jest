@@ -23,12 +23,12 @@ steps:
       export CACHE_PATH=$(mktemp -d)
       echo "cache_path: $CACHE_PATH"
 
-      if [ "$AGENT_OS" == "Windows_NT" ]; then
-        export CACHE_PATH_FOLDER_NAME=$(basename $CACHE_PATH)
-        echo "cache_path: $CACHE_PATH_FOLDER_NAME"
-        export CACHE_PATH="$(Pipeline.Workspace)\$CACHE_PATH_FOLDER_NAME"
-        echo "CACHE_PATH is now $CACHE_PATH"
-      fi
+      #if [ "$AGENT_OS" == "Windows_NT" ]; then
+      ##  export CACHE_PATH_FOLDER_NAME=$(basename $CACHE_PATH)
+      #  echo "cache_path: $CACHE_PATH_FOLDER_NAME"
+      #  export CACHE_PATH="$(Pipeline.Workspace)\$CACHE_PATH_FOLDER_NAME"
+      #  echo "CACHE_PATH is now $CACHE_PATH"
+      #fi
 
       echo "##vso[task.setvariable variable=CACHE_PATH]$CACHE_PATH"
     displayName: Pre-cache step
@@ -68,6 +68,7 @@ steps:
         $(Build.SourcesDirectory)/yarn.lock
       path: $(YARN_CACHE_FOLDER)
     displayName: Cache Yarn
+    condition: ne(variables.YARN_CACHE_FOLDER, '')
 
   # Ensure Node.js 10 is active
   - task: NodeTool@0
