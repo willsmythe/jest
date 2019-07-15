@@ -12,14 +12,38 @@ steps:
       git reset HEAD --hard
     displayName: Preserve LF endings and symbolic links
 
+  - bash: |
+      echo "Path to cache: $CACHE_PATH"
+
+      echo "Saving as __CACHE_PATH"
+      echo "##vso[task.setvariable variable=__CACHE_PATH]$CACHE_PATH"
+
+      echo "Setting CACHE_PATH to a new temporary path"
+
+      echo "export NEW_CACHE_PATH=$(mktemp --tmpdir=$PIPELINE_WORKSPACE -d)"
+
+      if ["$AGENT_OS" == "Windows_NT"]
+      then
+        export NEW_CACHE_PATH="$(Pipeline.Workspace)\$(basename $NEW_CACHE_PATH)"
+      fi
+
+      echo "##vso[task.setvariable variable=CACHE_PATH]$NEW_CACHE_PATH"
+      echo "New path to cache: $NEW_CACHE_PATH"
+
+    displayName: Pre-cache step
+
+  - bash: printenv
+  - script: set
+    condition: eq(variables.AGENT_OS, 'Windows_NT')
+
   - task: CacheBeta@0
     inputs:
       key: |
         jest
-        node_modules
+        node_modules_tar
         $(Agent.OS)
          $(Build.SourcesDirectory)/yarn.lock
-      path: $(Build.SourcesDirectory)/node_modules
+      path: $(CACHE_PATH)
     displayName: Cache node_modules
 
   - task: CacheBeta@0
