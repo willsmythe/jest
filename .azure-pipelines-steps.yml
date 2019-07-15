@@ -20,16 +20,18 @@ steps:
 
       echo "Setting CACHE_PATH to a new temporary path"
 
-      echo "export NEW_CACHE_PATH=$(mktemp --tmpdir=$PIPELINE_WORKSPACE -d)"
+      export CACHE_PATH=$(mktemp --tmpdir=$PIPELINE_WORKSPACE -d)
 
       if ["$AGENT_OS" == "Windows_NT"]
       then
-        export NEW_CACHE_PATH="$(Pipeline.Workspace)\$(basename $NEW_CACHE_PATH)"
+        export p="$(Pipeline.Workspace)"
+        echo "p is $p"
+        export CACHE_PATH="$(Pipeline.Workspace)\$(basename $CACHE_PATH)"
+        echo "CACHE_PATH is now $CACHE_PATH"
       fi
 
-      echo "##vso[task.setvariable variable=CACHE_PATH]$NEW_CACHE_PATH"
-      echo "New path to cache: $NEW_CACHE_PATH"
-
+      echo "##vso[task.setvariable variable=CACHE_PATH]$CACHE_PATH"
+      echo "New path to cache: $CACHE_PATH"
     displayName: Pre-cache step
 
   - bash: printenv
