@@ -53,6 +53,7 @@ steps:
 
   - bash: |
       echo "Path to untar to: $__CACHE_PATH"
+      mkdir -p $__CACHE_PATH
       TAR_FILE="$CACHE_PATH/_cache.tar"
       tar -xvf $TAR_FILE -C $__CACHE_PATH
       echo "files restored: $(ls -la $__CACHE_PATH)"
