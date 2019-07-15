@@ -31,6 +31,6 @@ variables:
   # Ensures the handful of tests that should be skipped during CI are
   CI: true
 
-  #YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.cache/yarn
+  YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.cache/yarn
 
   CACHE_PATH: $(Build.SourcesDirectory)/node_modules

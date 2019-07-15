@@ -19,27 +19,18 @@ steps:
       echo "##vso[task.setvariable variable=__CACHE_PATH]$CACHE_PATH"
 
       echo "Setting CACHE_PATH to a new temporary path"
-
-      echo "mktemp: $(mktemp --help)"
-
       export TMPDIR=$PIPELINE_WORKSPACE
-
       export CACHE_PATH=$(mktemp -d)
       echo "cache_path: $CACHE_PATH"
 
-      export CACHE_PATH_FOLDER_NAME=$(basename $CACHE_PATH)
-
-      echo "cache_path: $CACHE_PATH_FOLDER_NAME"
-
       if [ "$AGENT_OS" == "Windows_NT" ]; then
-        export p="$(Pipeline.Workspace)"
-        echo "p is $p"
-        export CACHE_PATH="$(Pipeline.Workspace)\$(basename $CACHE_PATH)"
+        export CACHE_PATH_FOLDER_NAME=$(basename $CACHE_PATH)
+        echo "cache_path: $CACHE_PATH_FOLDER_NAME"
+        export CACHE_PATH="$(Pipeline.Workspace)\$CACHE_PATH_FOLDER_NAME"
         echo "CACHE_PATH is now $CACHE_PATH"
       fi
 
       echo "##vso[task.setvariable variable=CACHE_PATH]$CACHE_PATH"
-      echo "New path to cache: $CACHE_PATH"
     displayName: Pre-cache step
 
   - bash: printenv
@@ -56,8 +47,18 @@ steps:
         $(Agent.OS)
          $(Build.SourcesDirectory)/yarn.lock
       path: $(CACHE_PATH)
+      cacheHitVar: CACHE_RESTORED
     displayName: Cache node_modules
+    condition: ne(variables.__CACHE_PATH, '')
 
+  - bash: |
+      echo "Path to untar to: $__CACHE_PATH"
+      TAR_FILE="$CACHE_PATH/_cache.tar"
+      tar -xvf $TAR_FILE -C $__CACHE_PATH
+      echo "files restored: $(ls -la $__CACHE_PATH)"
+    displayName: Cache post-restore step (untar contents)
+    condition: eq(variables.CACHE_RESTORED, 'true')
+ 
   - task: CacheBeta@0
     inputs:
       key: |
@@ -89,6 +90,13 @@ steps:
 
   - script: node scripts/build
     displayName: 'Build'
+
+  - bash: |
+      echo "Path to tar: ${__CACHE_PATH}"
+      TAR_FILE="$CACHE_PATH/_cache.tar"
+      tar -cvf $TAR_FILE $__CACHE_PATH
+      echo "tar details: $(ls -la $TAR_FILE)"        
+    displayName: Cache pre-save step (tar contents)
 
 # Run test-ci-partial
  # - script: yarn run test-ci-partial
