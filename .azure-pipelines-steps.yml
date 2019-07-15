@@ -58,7 +58,7 @@ steps:
       tar -xvf $TAR_FILE -C $__CACHE_PATH
       echo "files restored: $(ls -la $__CACHE_PATH)"
     displayName: Cache post-restore step (untar contents)
-    condition: eq(variables.CACHE_RESTORED, 'true')
+    condition: and(eq(variables.CACHE_RESTORED, 'true'), variables.__CACHE_PATH)
  
   - task: CacheBeta@0
     inputs:
@@ -89,6 +89,7 @@ steps:
 
   - script: yarn --no-progress --frozen-lockfile
     displayName: 'Install dependencies'
+    condition: ne(variables.CACHE_RESTORED, 'true')
 
   - script: node scripts/build
     displayName: 'Build'
