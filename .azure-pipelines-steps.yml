@@ -20,7 +20,14 @@ steps:
 
       echo "Setting CACHE_PATH to a new temporary path"
 
-      export CACHE_PATH=$(mktemp --tmpdir=$PIPELINE_WORKSPACE -d)
+      echo "mktemp: $(mktemp --help)"
+
+      export CACHE_PATH=$(mktemp -d -p $PIPELINE_WORKSPACE)
+      echo "cache_path: $CACHE_PATH"
+
+      export CACHE_PATH_FOLDER_NAME=$(basename $CACHE_PATH)
+
+      echo "cache_path: $CACHE_PATH_FOLDER_NAME"
 
       if [ "$AGENT_OS" == "Windows_NT" ]; then
         export p="$(Pipeline.Workspace)"
