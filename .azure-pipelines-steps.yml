@@ -5,8 +5,7 @@
 steps:
   - checkout: self
     path: jest
-
-  - checkout: caching-templates
+    persistCredentials: 'true'
 
   - script: |
       git config core.autocrlf false
@@ -14,6 +13,7 @@ steps:
       git reset HEAD --hard
     displayName: Preserve LF endings and symbolic links
 
+  - template: pack/init-steps.yml@caching-templates
   - template: pack/pre-restore-steps.yml@caching-templates
 
   - task: CacheBeta@0
