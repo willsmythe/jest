@@ -6,7 +6,7 @@ steps:
   - checkout: self
     path: jest
 
-  #- checkout: caching-templates
+  - checkout: caching-templates
 
   - script: |
       git config core.autocrlf false
