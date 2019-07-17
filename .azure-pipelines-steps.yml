@@ -6,70 +6,24 @@ steps:
   - checkout: self
     path: jest
 
+  #- checkout: caching-templates
+
   - script: |
       git config core.autocrlf false
       git config core.symlinks true
       git reset HEAD --hard
     displayName: Preserve LF endings and symbolic links
 
-  - bash: |
-      echo "Path to cache: $CACHE_PATH"
-
-      echo "Saving as __CACHE_PATH"
-      echo "##vso[task.setvariable variable=__CACHE_PATH]$CACHE_PATH"
-
-      echo "Setting CACHE_PATH to a new temporary path"
-      export TMPDIR=$PIPELINE_WORKSPACE
-      export CACHE_PATH=$(mktemp -d)
-      echo "cache_path: $CACHE_PATH"
-
-      #if [ "$AGENT_OS" == "Windows_NT" ]; then
-      ##  export CACHE_PATH_FOLDER_NAME=$(basename $CACHE_PATH)
-      #  echo "cache_path: $CACHE_PATH_FOLDER_NAME"
-      #  export CACHE_PATH="$(Pipeline.Workspace)\$CACHE_PATH_FOLDER_NAME"
-      #  echo "CACHE_PATH is now $CACHE_PATH"
-      #fi
-
-      echo "##vso[task.setvariable variable=CACHE_PATH]$CACHE_PATH"
-    displayName: Pre-cache step
-
-  - bash: printenv
-  - script: |
-      set > a.txt
-      type a.txt
-    condition: eq(variables['Agent.OS'], 'Windows_NT')
+  - template: pack/pre-restore-steps.yml@caching-templates
 
   - task: CacheBeta@0
     inputs:
-      key: |
-        jest
-        node_modules_tar
-        $(Agent.OS)
-         $(Build.SourcesDirectory)/yarn.lock
+      key: $(CACHE_KEY)
       path: $(CACHE_PATH)
       cacheHitVar: CACHE_RESTORED
-    displayName: Cache node_modules
-    condition: ne(variables.__CACHE_PATH, '')
+    displayName: Cache node_modules    
 
-  - bash: |
-      echo "Path to untar to: $__CACHE_PATH"
-      mkdir -p $__CACHE_PATH
-      TAR_FILE="$CACHE_PATH/_cache.tar"
-      tar -xvf $TAR_FILE -C $__CACHE_PATH
-      echo "files restored: $(ls -la $__CACHE_PATH)"
-    displayName: Cache post-restore step (untar contents)
-    condition: and(eq(variables.CACHE_RESTORED, 'true'), variables.__CACHE_PATH)
- 
-  - task: CacheBeta@0
-    inputs:
-      key: |
-        jest
-        yarn
-        $(Agent.OS)
-        $(Build.SourcesDirectory)/yarn.lock
-      path: $(YARN_CACHE_FOLDER)
-    displayName: Cache Yarn
-    condition: ne(variables.YARN_CACHE_FOLDER, '')
+  - template: pack/post-restore-steps.yml@caching-templates
 
   # Ensure Node.js 10 is active
   - task: NodeTool@0
@@ -94,12 +48,7 @@ steps:
   - script: node scripts/build
     displayName: 'Build'
 
-  - bash: |
-      echo "Path to tar: ${__CACHE_PATH}"
-      TAR_FILE="$CACHE_PATH/_cache.tar"
-      tar -cvf $TAR_FILE $__CACHE_PATH
-      echo "tar details: $(ls -la $TAR_FILE)"        
-    displayName: Cache pre-save step (tar contents)
+  - template: pack/pre-save-steps.yml@caching-templates
 
 # Run test-ci-partial
  # - script: yarn run test-ci-partial

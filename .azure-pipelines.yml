@@ -2,6 +2,12 @@
 # Azure Pipelines configuration for building and testing Jest on Linux, Windows, and macOS.
 #
 
+resources:
+  repositories:
+  - repository: caching-templates
+    type: git
+    name: caching-templates
+
 jobs:
   - job: Linux
     pool:
@@ -33,4 +39,10 @@ variables:
 
   #YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.cache/yarn
 
+  CACHE_PACK: true
   CACHE_PATH: $(Build.SourcesDirectory)/node_modules
+  CACHE_KEY: |
+    jest2
+    node_modules_tar
+    $(Agent.OS)
+    $(Build.SourcesDirectory)/yarn.lock
