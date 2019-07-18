@@ -11,13 +11,13 @@ resources:
 
 stages:
 - stage: firstrun
-  displayName: 'First run (empty cache); no pack'
+  displayName: 'Empty cache'
   jobs:
   - template: .azure-pipelines-jobs.yml
 
 - stage: secondrun
   dependsOn: firstrun
-  displayName: 'Second run (cache hit); no pack'
+  displayName: 'Cached'
   jobs:
   - template: .azure-pipelines-jobs.yml
 
@@ -25,7 +25,7 @@ stages:
   dependsOn: []
   variables:
     CACHE_PACK: true
-  displayName: 'First run (empty cache); pack'
+  displayName: 'Empty cache (tar/7z)'
   jobs:
   - template: .azure-pipelines-jobs.yml
 
@@ -33,7 +33,7 @@ stages:
   dependsOn: firstrun_pack
   variables:
     CACHE_PACK: true
-  displayName: 'Second run (cache hit); pack'
+  displayName: 'Cached (tar/7z)'
   jobs:
   - template: .azure-pipelines-jobs.yml
 
