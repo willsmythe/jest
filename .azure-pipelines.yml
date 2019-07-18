@@ -39,10 +39,10 @@ variables:
 
   #YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.cache/yarn
 
-  CACHE_PACK: true
+  #CACHE_PACK: true
   CACHE_PATH: $(Build.SourcesDirectory)/node_modules
   CACHE_KEY: |
-    jest-v5
-    node_modules_tar
+    jest-v6
+    node_modules
     $(Agent.OS)
     $(Build.SourcesDirectory)/yarn.lock
