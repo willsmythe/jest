@@ -5,7 +5,7 @@
 steps:
   - checkout: self
     path: jest
-    persistCredentials: 'true'
+    #persistCredentials: 'true'
 
   - script: |
       git config core.autocrlf false

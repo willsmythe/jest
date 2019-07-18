@@ -5,8 +5,8 @@
 resources:
   repositories:
   - repository: caching-templates
-    type: git
-    name: caching-templates
+    type: github
+    name: willsmythe/caching-templates
 
 jobs:
   - job: Linux
