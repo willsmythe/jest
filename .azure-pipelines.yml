@@ -11,40 +11,31 @@ resources:
 
 stages:
 - stage: firstrun
-  displayName: 'First run (empty cache)'
+  displayName: 'First run (empty cache); no pack'
   jobs:
-  - job:
-    strategy:
-      matrix:
-        linux:    
-          VM_IMAGE: ubuntu-16.04
-        windows:
-          VM_IMAGE: vs2017-win2016
-          CACHE_PACK_FORMAT: 7z-split
-        macos:
-          VM_IMAGE: macos-10.13
-    pool:
-      vmImage: $(VM_IMAGE)
-    steps:
-    - template: .azure-pipelines-steps.yml
+  - template: .azure-pipelines-jobs.yml
 
 - stage: secondrun
-  displayName: 'Second run (cache hit)'
+  dependsOn: firstrun
+  displayName: 'Second run (cache hit); no pack'
   jobs:
-  - job:
-    strategy:
-      matrix:
-        linux:    
-          VM_IMAGE: ubuntu-16.04
-        windows:
-          VM_IMAGE: vs2017-win2016
-          CACHE_PACK_FORMAT: 7z-split
-        macos:
-          VM_IMAGE: macos-10.13
-    pool:
-      vmImage: $(VM_IMAGE)
-    steps:
-    - template: .azure-pipelines-steps.yml
+  - template: .azure-pipelines-jobs.yml
+
+- stage: firstrun-pack
+  dependsOn: []
+  variables:
+    CACHE_PACK: true
+  displayName: 'First run (empty cache); pack'
+  jobs:
+  - template: .azure-pipelines-jobs.yml
+
+- stage: secondrun-pack
+  dependsOn: firstrun-pack
+  variables:
+    CACHE_PACK: true
+  displayName: 'Second run (cache hit); pack'
+  jobs:
+  - template: .azure-pipelines-jobs.yml
 
 variables:
   # Used by chalk. Ensures output from Jest includes ANSI escape characters that are needed to match test snapshots.
@@ -53,7 +44,6 @@ variables:
   # Ensures the handful of tests that should be skipped during CI are
   CI: true
 
-  #CACHE_PACK: true
   CACHE_PATH: $(Build.SourcesDirectory)/node_modules
   CACHE_KEY: |    
     jest-v10
