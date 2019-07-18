@@ -37,15 +37,15 @@ steps:
     displayName: 'Use Python 2.7'
 
   # Run yarn to install dependencies and build
- # - script: node scripts/remove-postinstall
- #   displayName: 'Remove postinstall script'
+  - script: node scripts/remove-postinstall
+    displayName: 'Remove postinstall script'
 
   - script: yarn --no-progress --frozen-lockfile
     displayName: 'Install dependencies'
     condition: ne(variables.CACHE_RESTORED, 'true')
 
- # - script: node scripts/build
- #   displayName: 'Build'
+  - script: node scripts/build
+    displayName: 'Build'
 
   - template: pack/pre-save-steps.yml@caching-templates
 
