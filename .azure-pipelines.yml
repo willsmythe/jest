@@ -23,7 +23,7 @@ jobs:
       - template: .azure-pipelines-steps.yml
     variables:
       #CACHE_PACK_TEMP: 'c:\temp\pipelines-caching'
-      CACHE_PACK_FORMAT: 7z
+      CACHE_PACK_FORMAT: 7z-split
 
   - job: macOS
     pool:
