@@ -21,7 +21,7 @@ stages:
   jobs:
   - template: .azure-pipelines-jobs.yml
 
-- stage: firstrun-pack
+- stage: firstrun_pack
   dependsOn: []
   variables:
     CACHE_PACK: true
@@ -29,8 +29,8 @@ stages:
   jobs:
   - template: .azure-pipelines-jobs.yml
 
-- stage: secondrun-pack
-  dependsOn: firstrun-pack
+- stage: secondrun_pack
+  dependsOn: firstrun_pack
   variables:
     CACHE_PACK: true
   displayName: 'Second run (cache hit); pack'
