@@ -6,6 +6,11 @@ steps:
   - checkout: self
     path: jest
 
+    # This step can be removed once Mercurial gets installed on the macOS image. See https://github.com/Microsoft/azure-pipelines-image-generation/issues/604
+  - script: HOMEBREW_NO_AUTO_UPDATE=1 brew install mercurial
+    displayName: 'Install Mercurial'
+    condition: eq(variables.AGENT_OS, 'Darwin')
+
   - script: |
       git config core.autocrlf false
       git config core.symlinks true

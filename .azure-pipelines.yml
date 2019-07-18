@@ -10,38 +10,39 @@ resources:
     endpoint: willsmythe
 
 stages:
-- stage: linux
-  dependsOn: []
+- stage: firstrun
   jobs:
   - job:
+    strategy:
+      matrix:
+        linux:    
+          VM_IMAGE: ubuntu-16.04
+        windows:
+          VM_IMAGE: vs2017-win2016
+          CACHE_PACK_FORMAT: 7z-split
+        macos:
+          VM_IMAGE: macos-10.13
     pool:
-      vmImage: ubuntu-16.04
+      vmImage: $(VM_IMAGE)
     steps:
-      - template: .azure-pipelines-steps.yml
+    - template: .azure-pipelines-steps.yml
 
-- stage: windows
-  dependsOn: []
+- stage: secondrun
   jobs:
   - job:
+    strategy:
+      matrix:
+        linux:    
+          VM_IMAGE: ubuntu-16.04
+        windows:
+          VM_IMAGE: vs2017-win2016
+          CACHE_PACK_FORMAT: 7z-split
+        macos:
+          VM_IMAGE: macos-10.13
     pool:
-      vmImage: vs2017-win2016
+      vmImage: $(VM_IMAGE)
     steps:
-      - template: .azure-pipelines-steps.yml
-    variables:
-      #CACHE_PACK_TEMP: 'c:\temp\pipelines-caching'
-      CACHE_PACK_FORMAT: 7z-split
-
-- stage: macos
-  dependsOn: []
-  jobs:
-  - job:
-    pool:
-      vmImage: macos-10.13
-    steps:
-      # This step can be removed once Mercurial gets installed on the macOS image. See https://github.com/Microsoft/azure-pipelines-image-generation/issues/604
-      - script: HOMEBREW_NO_AUTO_UPDATE=1 brew install mercurial
-        displayName: 'Install Mercurial'
-      - template: .azure-pipelines-steps.yml
+    - template: .azure-pipelines-steps.yml
 
 variables:
   # Used by chalk. Ensures output from Jest includes ANSI escape characters that are needed to match test snapshots.
@@ -52,11 +53,11 @@ variables:
 
   CACHE_PACK: true
   CACHE_PATH: $(Build.SourcesDirectory)/node_modules
-  CACHE_KEY: |
+  CACHE_KEY: |    
     jest-v10
     node_modules
     $(Agent.OS)
     $(Build.SourcesDirectory)/yarn.lock
     $(CACHE_PACK)
     $(CACHE_PACK_FORMAT)
-
+    $(Build.BuildNumber)
