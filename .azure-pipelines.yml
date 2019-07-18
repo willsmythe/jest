@@ -21,6 +21,8 @@ jobs:
       vmImage: vs2017-win2016
     steps:
       - template: .azure-pipelines-steps.yml
+    variables:
+      CACHE_PACK_TEMP: 'c:\temp\pipelines-caching'
 
   - job: macOS
     pool:
