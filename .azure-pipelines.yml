@@ -42,6 +42,7 @@ stages:
 ##############
 
 - stage: firstrun_yarn
+  dependsOn: []
   displayName: 'Empty (yarn)'
   variables:
     YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.cache/yarn
@@ -58,7 +59,7 @@ stages:
   jobs:
   - template: .azure-pipelines-jobs.yml
 
-- stage: firstrun_yarn_pack
+- stage: firstrun_yarn_pack  
   dependsOn: []
   variables:
     YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.cache/yarn
