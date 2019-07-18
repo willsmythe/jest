@@ -53,7 +53,7 @@ variables:
   # Ensures the handful of tests that should be skipped during CI are
   CI: true
 
-  CACHE_PACK: true
+  #CACHE_PACK: true
   CACHE_PATH: $(Build.SourcesDirectory)/node_modules
   CACHE_KEY: |    
     jest-v10
