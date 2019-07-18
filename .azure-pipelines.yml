@@ -11,13 +11,13 @@ resources:
 
 stages:
 - stage: firstrun
-  displayName: 'Empty cache'
+  displayName: 'Empty (node_modules)'
   jobs:
   - template: .azure-pipelines-jobs.yml
 
 - stage: secondrun
   dependsOn: firstrun
-  displayName: 'Cached'
+  displayName: 'Cached (node_modules)'
   jobs:
   - template: .azure-pipelines-jobs.yml
 
@@ -25,7 +25,7 @@ stages:
   dependsOn: []
   variables:
     CACHE_PACK: true
-  displayName: 'Empty cache (tar/7z)'
+  displayName: 'Empty (node_modules; tar/7z)'
   jobs:
   - template: .azure-pipelines-jobs.yml
 
@@ -33,7 +33,48 @@ stages:
   dependsOn: firstrun_pack
   variables:
     CACHE_PACK: true
-  displayName: 'Cached (tar/7z)'
+  displayName: 'Cached (node_modules; tar/7z)'
+  jobs:
+  - template: .azure-pipelines-jobs.yml
+
+#############
+# caching yarn global cache
+##############
+
+- stage: firstrun_yarn
+  displayName: 'Empty (yarn)'
+  variables:
+    YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.cache/yarn
+    CACHE_PATH: $(YARN_CACHE_FOLDER)
+  jobs:
+  - template: .azure-pipelines-jobs.yml
+
+- stage: secondrun_yarn
+  dependsOn: firstrun_yarn
+  displayName: 'Cached (yarn)'
+  variables:
+    YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.cache/yarn
+    CACHE_PATH: $(YARN_CACHE_FOLDER)
+  jobs:
+  - template: .azure-pipelines-jobs.yml
+
+- stage: firstrun_yarn_pack
+  dependsOn: []
+  variables:
+    YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.cache/yarn
+    CACHE_PATH: $(YARN_CACHE_FOLDER)
+    CACHE_PACK: true
+  displayName: 'Empty (yarn; tar/7z)'
+  jobs:
+  - template: .azure-pipelines-jobs.yml
+
+- stage: secondrun_yarn_pack
+  dependsOn: firstrun_yarn_pack
+  variables:
+    YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.cache/yarn
+    CACHE_PATH: $(YARN_CACHE_FOLDER)
+    CACHE_PACK: true
+  displayName: 'Cached (yarn; tar/7z)'
   jobs:
   - template: .azure-pipelines-jobs.yml
 
@@ -53,3 +94,4 @@ variables:
     $(CACHE_PACK)
     $(CACHE_PACK_FORMAT)
     $(Build.BuildNumber)
+    $(CACHE_PATH)
