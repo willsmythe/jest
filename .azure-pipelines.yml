@@ -9,14 +9,20 @@ resources:
     name: willsmythe/caching-templates
     endpoint: willsmythe
 
-jobs:
-  - job: Linux
+stages:
+- stage: linux
+  dependsOn: []
+  jobs:
+  - job:
     pool:
       vmImage: ubuntu-16.04
     steps:
       - template: .azure-pipelines-steps.yml
 
-  - job: Windows
+- stage: windows
+  dependsOn: []
+  jobs:
+  - job:
     pool:
       vmImage: vs2017-win2016
     steps:
@@ -25,7 +31,10 @@ jobs:
       #CACHE_PACK_TEMP: 'c:\temp\pipelines-caching'
       CACHE_PACK_FORMAT: 7z-split
 
-  - job: macOS
+- stage: macos
+  dependsOn: []
+  jobs:
+  - job:
     pool:
       vmImage: macos-10.13
     steps:
