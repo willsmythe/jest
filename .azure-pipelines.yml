@@ -42,7 +42,7 @@ variables:
   CACHE_PACK: true
   CACHE_PATH: $(Build.SourcesDirectory)/node_modules
   CACHE_KEY: |
-    jest-v3
+    jest-v4
     node_modules_tar
     $(Agent.OS)
     $(Build.SourcesDirectory)/yarn.lock
