@@ -11,6 +11,7 @@ resources:
 
 stages:
 - stage: firstrun
+  displayName: 'First run (empty cache)'
   jobs:
   - job:
     strategy:
@@ -28,6 +29,7 @@ stages:
     - template: .azure-pipelines-steps.yml
 
 - stage: secondrun
+  displayName: 'Second run (cache hit)'
   jobs:
   - job:
     strategy:
