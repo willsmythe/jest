@@ -7,6 +7,7 @@ resources:
   - repository: caching-templates
     type: github
     name: willsmythe/caching-templates
+    endpoint: caching-tests
 
 jobs:
   - job: Linux
