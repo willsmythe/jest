@@ -22,7 +22,8 @@ jobs:
     steps:
       - template: .azure-pipelines-steps.yml
     variables:
-      CACHE_PACK_TEMP: 'c:\temp\pipelines-caching'
+      #CACHE_PACK_TEMP: 'c:\temp\pipelines-caching'
+      CACHE_PACK_FORMAT: 7z
 
   - job: macOS
     pool:
@@ -41,10 +42,9 @@ variables:
   CI: true
 
   CACHE_PACK: true
-  CACHE_PACK_FORMAT: 7z
   CACHE_PATH: $(Build.SourcesDirectory)/node_modules
   CACHE_KEY: |
-    jest-v8
+    jest-v9
     node_modules
     $(Agent.OS)
     $(Build.SourcesDirectory)/yarn.lock
