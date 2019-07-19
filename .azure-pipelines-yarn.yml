@@ -1,0 +1,60 @@
+#
+# Azure Pipelines configuration for building and testing Jest on Linux, Windows, and macOS.
+#
+
+resources:
+  repositories:
+  - repository: caching-templates
+    type: github
+    name: willsmythe/caching-templates
+    endpoint: willsmythe
+
+stages:
+- stage: firstrun_yarn
+  dependsOn: []
+  displayName: 'Empty cache'
+  jobs:
+  - template: .azure-pipelines-jobs.yml
+
+- stage: secondrun_yarn
+  dependsOn: firstrun_yarn
+  variables:
+  displayName: 'Cached'
+  jobs:
+  - template: .azure-pipelines-jobs.yml
+
+- stage: firstrun_yarn_pack  
+  dependsOn: []
+  variables:
+    CACHE_PACK: true
+  displayName: 'Empty cache (tar/7z)'
+  jobs:
+  - template: .azure-pipelines-jobs.yml
+
+- stage: secondrun_yarn_pack
+  dependsOn: firstrun_yarn_pack
+  variables:
+    CACHE_PACK: true
+  displayName: 'Cached (tar/7z)'
+  jobs:
+  - template: .azure-pipelines-jobs.yml
+
+variables:
+  # Used by chalk. Ensures output from Jest includes ANSI escape characters that are needed to match test snapshots.
+  FORCE_COLOR: 1
+
+  # Ensures the handful of tests that should be skipped during CI are
+  CI: true
+
+  YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.cache/yarn
+  CACHE_PATH: $(YARN_CACHE_FOLDER)
+  CACHE_KEY: |    
+    jest-v10
+    node_modules
+    $(Agent.OS)
+    $(Build.SourcesDirectory)/yarn.lock
+    $(CACHE_PACK)
+    $(CACHE_PACK_FORMAT)
+    $(Build.BuildNumber)
+
+  YARN_INSTALL: true
