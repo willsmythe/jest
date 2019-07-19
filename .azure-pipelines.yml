@@ -25,7 +25,7 @@ stages:
   dependsOn: []
   variables:
     CACHE_PACK: true
-  displayName: 'Empty cache (tar/7z)'
+  displayName: 'Empty cache (tar/zip)'
   jobs:
   - template: .azure-pipelines-jobs.yml
 
@@ -33,7 +33,7 @@ stages:
   dependsOn: firstrun_pack
   variables:
     CACHE_PACK: true
-  displayName: 'Cached (tar/7z)'
+  displayName: 'Cached (tar/zip)'
   jobs:
   - template: .azure-pipelines-jobs.yml
 
