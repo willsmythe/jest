@@ -6,11 +6,9 @@ jobs:
         VM_IMAGE: ubuntu-16.04
       windows:
         VM_IMAGE: vs2017-win2016
-        CACHE_PACK_FORMAT: 7z-split
       macos:
         VM_IMAGE: macos-10.13
   pool:
     vmImage: $(VM_IMAGE)
   steps:
   - template: .azure-pipelines-steps.yml
-  

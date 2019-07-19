@@ -46,7 +46,7 @@ steps:
 
   - script: yarn --no-progress --frozen-lockfile
     displayName: 'Install dependencies'
-    condition: ne(variables.CACHE_RESTORED, 'true')
+    condition: or(variables.YARN_INSTALL, ne(variables.CACHE_RESTORED, 'true'))
 
   - script: node scripts/build
     displayName: 'Build'
