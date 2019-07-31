@@ -46,8 +46,8 @@ stages:
   jobs:
   - template: .azure-pipelines-jobs.yml
 
-- stage: secondrun_pack
-  dependsOn: firstrun_pack
+- stage: secondrun_tar
+  dependsOn: firstrun_tar
   variables:
     CACHE_PACK: true
     CACHE_PACK_FORMAT: tar
