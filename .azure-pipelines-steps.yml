@@ -17,16 +17,16 @@ steps:
       git reset HEAD --hard
     displayName: Preserve LF endings and symbolic links
 
-  - template: pack/pre-restore-steps.yml@caching-templates
+  #- template: pack/pre-restore-steps.yml@caching-templates
 
-  - task: CacheBeta@0
+  - task: CacheBeta@1
     inputs:
       key: $(CACHE_KEY)
       path: $(CACHE_PATH)
       cacheHitVar: CACHE_RESTORED
     displayName: Cache node_modules    
 
-  - template: pack/post-restore-steps.yml@caching-templates
+  #- template: pack/post-restore-steps.yml@caching-templates
 
   # Ensure Node.js 10 is active
   - task: NodeTool@0
@@ -51,7 +51,7 @@ steps:
   - script: node scripts/build
     displayName: 'Build'
 
-  - template: pack/pre-save-steps.yml@caching-templates
+  #- template: pack/pre-save-steps.yml@caching-templates
 
 # Run test-ci-partial
  # - script: yarn run test-ci-partial

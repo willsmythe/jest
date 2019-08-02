@@ -2,58 +2,51 @@
 # Azure Pipelines configuration for building and testing Jest on Linux, Windows, and macOS.
 #
 
-resources:
-  repositories:
-  - repository: caching-templates
-    type: github
-    name: willsmythe/caching-templates
-    endpoint: willsmythe
-
 stages:
 - stage: firstrun
-  displayName: 'Empty cache (no tar/zip)'
+  displayName: 'Empty cache'
   jobs:
   - template: .azure-pipelines-jobs.yml
 
 - stage: secondrun
   dependsOn: firstrun
-  displayName: 'Cached (no tar/zip)'
+  displayName: 'Cached'
   jobs:
   - template: .azure-pipelines-jobs.yml
 
-- stage: firstrun_pack
-  dependsOn: []
-  variables:
-    CACHE_PACK: true
-  displayName: 'Empty cache (tar/7z)'
-  jobs:
-  - template: .azure-pipelines-jobs.yml
+# - stage: firstrun_pack
+#   dependsOn: []
+#   variables:
+#     CACHE_PACK: true
+#   displayName: 'Empty cache (tar/7z)'
+#   jobs:
+#   - template: .azure-pipelines-jobs.yml
 
-- stage: secondrun_pack
-  dependsOn: firstrun_pack
-  variables:
-    CACHE_PACK: true
-  displayName: 'Cached (tar/7z)'
-  jobs:
-  - template: .azure-pipelines-jobs.yml
+# - stage: secondrun_pack
+#   dependsOn: firstrun_pack
+#   variables:
+#     CACHE_PACK: true
+#   displayName: 'Cached (tar/7z)'
+#   jobs:
+#   - template: .azure-pipelines-jobs.yml
 
-- stage: firstrun_tar
-  dependsOn: []
-  variables:
-    CACHE_PACK: true
-    CACHE_PACK_FORMAT: tar
-  displayName: 'Empty cache (tar/tar)'
-  jobs:
-  - template: .azure-pipelines-jobs.yml
+# - stage: firstrun_tar
+#   dependsOn: []
+#   variables:
+#     CACHE_PACK: true
+#     CACHE_PACK_FORMAT: tar
+#   displayName: 'Empty cache (tar/tar)'
+#   jobs:
+#   - template: .azure-pipelines-jobs.yml
 
-- stage: secondrun_tar
-  dependsOn: firstrun_tar
-  variables:
-    CACHE_PACK: true
-    CACHE_PACK_FORMAT: tar
-  displayName: 'Cached (tar/tar)'
-  jobs:
-  - template: .azure-pipelines-jobs.yml
+# - stage: secondrun_tar
+#   dependsOn: firstrun_tar
+#   variables:
+#     CACHE_PACK: true
+#     CACHE_PACK_FORMAT: tar
+#   displayName: 'Cached (tar/tar)'
+#   jobs:
+#   - template: .azure-pipelines-jobs.yml
 
 variables:
   # Used by chalk. Ensures output from Jest includes ANSI escape characters that are needed to match test snapshots.
@@ -63,11 +56,4 @@ variables:
   CI: true
 
   CACHE_PATH: $(Build.SourcesDirectory)/node_modules
-  CACHE_KEY: |    
-    jest-v10
-    node_modules
-    $(Agent.OS)
-    $(Build.SourcesDirectory)/yarn.lock
-    $(CACHE_PACK)
-    $(CACHE_PACK_FORMAT)
-    $(Build.BuildId)
+  CACHE_KEY: jest-v11 | node_modules | $(Agent.OS) | $(Build.SourcesDirectory)/yarn.lock | $(CACHE_PACK) | $(CACHE_PACK_FORMAT) | $(Build.BuildId)
