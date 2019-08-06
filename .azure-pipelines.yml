@@ -14,6 +14,11 @@ jobs:
     inputs:
       key: $(Agent.OS)
     continueOnError: true
+
+  - task: CacheBeta@0
+    inputs:
+      key: yarn.lock
+    continueOnError: true   
  
   - task: CacheBeta@0
     inputs:
