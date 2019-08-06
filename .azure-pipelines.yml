@@ -28,7 +28,7 @@ jobs:
       key: |
         $(Agent.OS)
         jest-test
-        packages/*/package.json
-        somethingelse 
+        packages/**/package.json
+        somethingelse
     continueOnError: true
  
