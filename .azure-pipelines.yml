@@ -38,4 +38,4 @@ jobs:
   - task: CacheBeta@0
     inputs:
       key: key1 | badfile.txt | packages/**/package.json | ./badfile.txt
-continueOnError: true
+    continueOnError: true
