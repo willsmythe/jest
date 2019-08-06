@@ -3,34 +3,26 @@
 #
 
 jobs:
-  - job: Linux
-    pool:
-      vmImage: ubuntu-16.04
-    steps:
-      - template: .azure-pipelines-steps.yml
+- job: tests
+  pool:
+    name: Caching
+  steps:
+  - task: CacheBeta@0
+    inputs:
+      key: $(Agent.OS)
+ 
+  - task: CacheBeta@0
+    inputs:
+      key: |
+        $(Agent.OS)
+        jest-test
+        yarn.lock
 
-  - job: Windows
-    pool:
-      vmImage: vs2017-win2016
-    steps:
-      - script: |
-          git config --global core.autocrlf false
-          git config --global core.symlinks true
-        displayName: 'Preserve LF endings and symbolic links on check out'
-      - template: .azure-pipelines-steps.yml
-
-  - job: macOS
-    pool:
-      vmImage: macos-10.13
-    steps:
-      # This step can be removed once Mercurial gets installed on the macOS image. See https://github.com/Microsoft/azure-pipelines-image-generation/issues/604
-      - script: HOMEBREW_NO_AUTO_UPDATE=1 brew install mercurial
-        displayName: 'Install Mercurial'
-      - template: .azure-pipelines-steps.yml
-
-variables:
-  # Used by chalk. Ensures output from Jest includes ANSI escape characters that are needed to match test snapshots.
-  FORCE_COLOR: 1
-
-  # Ensures the handful of tests that should be skipped during CI are
-  CI: true
+  - task: CacheBeta@0
+    inputs:
+      key: |
+        $(Agent.OS)
+        jest-test
+        packages/*/package.json
+        somethingelse
+ 
