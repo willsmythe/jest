@@ -5,11 +5,11 @@
 jobs:
 - job: tests
   pool:
-    name: Caching
+    name: Caching2
   steps:
   - checkout: self
     fetchDepth: 1
-    
+
   - task: CacheBeta@0
     inputs:
       key: $(Agent.OS)
