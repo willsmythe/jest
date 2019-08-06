@@ -7,9 +7,13 @@ jobs:
   pool:
     name: Caching
   steps:
+  - checkout: self
+    fetchDepth: 1
+    
   - task: CacheBeta@0
     inputs:
       key: $(Agent.OS)
+    continueOnError: true
  
   - task: CacheBeta@0
     inputs:
@@ -17,6 +21,7 @@ jobs:
         $(Agent.OS)
         jest-test
         yarn.lock
+    continueOnError: true
 
   - task: CacheBeta@0
     inputs:
@@ -24,5 +29,6 @@ jobs:
         $(Agent.OS)
         jest-test
         packages/*/package.json
-        somethingelse
+        somethingelse 
+    continueOnError: true
  
