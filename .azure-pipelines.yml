@@ -3,39 +3,14 @@
 #
 
 jobs:
-- job: tests
+- job: caching2
   pool:
     name: Caching2
   steps:
-  - checkout: self
-    fetchDepth: 1
+  - template: .azure-pipelines-steps.yml
 
-  - task: CacheBeta@0
-    inputs:
-      key: $(Agent.OS)
-    continueOnError: true
-
-  - task: CacheBeta@0
-    inputs:
-      key: yarn.lock
-    continueOnError: true   
- 
-  - task: CacheBeta@0
-    inputs:
-      key: $(Agent.OS) | jest-test | yarn.lock
-    continueOnError: true
-
-  - task: CacheBeta@0
-    inputs:
-      key: $(Agent.OS) | $(SOME_INVALID) | jest-test | packages/**/package.json | somethingelse
-    continueOnError: true
- 
-  - task: CacheBeta@0
-    inputs:
-      key: key1 | packages/**/FOOOO__package.json | yarn.lock
-    continueOnError: true
-
-  - task: CacheBeta@0
-    inputs:
-      key: key1 | badfile.txt | packages/**/package.json | ./badfile.txt
-    continueOnError: true
+- job: hosted
+  pool:
+    vmImage: ubuntu-latest
+  steps:
+  - template: .azure-pipelines-steps.yml

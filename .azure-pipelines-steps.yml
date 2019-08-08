@@ -1,41 +1,34 @@
-#
-# Steps for building and testing Jest. See jobs defined in .azure-pipelines.yml
-#
-
 steps:
   - checkout: self
-    path: jest
+    fetchDepth: 1
 
-  # Ensure Node.js 10 is active
-  - task: NodeTool@0
+  - task: CacheBeta@0
     inputs:
-      versionSpec: '10.x'
-    displayName: 'Use Node.js 10'
+      key: $(Agent.OS)
+    continueOnError: true
 
-  # Ensure Python 2.7 is active
-  - task: UsePythonVersion@0
+  - task: CacheBeta@0
     inputs:
-      versionSpec: '2.7'
-    displayName: 'Use Python 2.7'
-
-  # Run yarn to install dependencies and build
-  - script: node scripts/remove-postinstall
-    displayName: 'Remove postinstall script'
-
-  - script: yarn --no-progress --frozen-lockfile
-    displayName: 'Install dependencies'
-
-  - script: node scripts/build
-    displayName: 'Build'
-
-  # Run test-ci-partial
-  - script: yarn run test-ci-partial
-    displayName: 'Run tests'
-
-  # Publish CI test results
-  - task: PublishTestResults@2
+      key: yarn.lock
+    continueOnError: true   
+ 
+  - task: CacheBeta@0
     inputs:
-      testResultsFiles: '**/reports/junit/*.xml'
-      testRunTitle: 'CI Tests $(Agent.OS)'
-    displayName: 'Publish test results'
-    condition: succeededOrFailed()
+      key: $(Agent.OS) | jest-test | yarn.lock
+    continueOnError: true
+
+  - task: CacheBeta@0
+    inputs:
+      key: $(Agent.OS) | $(SOME_INVALID) | jest-test | packages/**/package.json | somethingelse
+    continueOnError: true
+ 
+  - task: CacheBeta@0
+    inputs:
+      key: key1 | packages/**/FOOOO__package.json | yarn.lock
+    continueOnError: true
+
+  - task: CacheBeta@0
+    inputs:
+      key: key1 | badfile.txt | packages/**/package.json | ./badfile.txt
+    continueOnError: true
+  
