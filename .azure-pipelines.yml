@@ -11,6 +11,6 @@ jobs:
 
 - job: hosted
   pool:
-    vmImage: ubuntu-latest
+    vmImage: windows-latest
   steps:
   - template: .azure-pipelines-steps.yml
