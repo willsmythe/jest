@@ -18,7 +18,6 @@ stages:
 
 - stage: secondrun_yarn
   dependsOn: firstrun_yarn
-  variables:
   displayName: 'Cached'
   jobs:
   - template: .azure-pipelines-jobs.yml
