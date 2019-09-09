@@ -3,50 +3,32 @@
 #
 
 stages:
-- stage: firstrun
-  displayName: 'Empty cache'
+- stage: empty
+  displayName: 'Empty'
   jobs:
   - template: .azure-pipelines-jobs.yml
 
-- stage: secondrun
-  dependsOn: firstrun
+- stage: cached
+  dependsOn: empty
   displayName: 'Cached'
   jobs:
   - template: .azure-pipelines-jobs.yml
 
-# - stage: firstrun_pack
-#   dependsOn: []
-#   variables:
-#     CACHE_PACK: true
-#   displayName: 'Empty cache (tar/7z)'
-#   jobs:
-#   - template: .azure-pipelines-jobs.yml
+- stage: empty_tar
+  dependsOn: []
+  displayName: 'Empty (tar)'
+  jobs:
+  - template: .azure-pipelines-jobs.yml
+  variables:
+    AZP_CACHING_TAR: true
 
-# - stage: secondrun_pack
-#   dependsOn: firstrun_pack
-#   variables:
-#     CACHE_PACK: true
-#   displayName: 'Cached (tar/7z)'
-#   jobs:
-#   - template: .azure-pipelines-jobs.yml
-
-# - stage: firstrun_tar
-#   dependsOn: []
-#   variables:
-#     CACHE_PACK: true
-#     CACHE_PACK_FORMAT: tar
-#   displayName: 'Empty cache (tar/tar)'
-#   jobs:
-#   - template: .azure-pipelines-jobs.yml
-
-# - stage: secondrun_tar
-#   dependsOn: firstrun_tar
-#   variables:
-#     CACHE_PACK: true
-#     CACHE_PACK_FORMAT: tar
-#   displayName: 'Cached (tar/tar)'
-#   jobs:
-#   - template: .azure-pipelines-jobs.yml
+- stage: cached_tar
+  dependsOn: empty_tar
+  displayName: 'Cached (tar)'
+  jobs:
+  - template: .azure-pipelines-jobs.yml
+  variables:
+    AZP_CACHING_TAR: true
 
 variables:
   # Used by chalk. Ensures output from Jest includes ANSI escape characters that are needed to match test snapshots.
@@ -56,4 +38,4 @@ variables:
   CI: true
 
   CACHE_PATH: $(Build.SourcesDirectory)/node_modules
-  CACHE_KEY: jest-v11 | node_modules | $(Agent.OS) | $(Build.SourcesDirectory)/yarn.lock | $(CACHE_PACK) | $(CACHE_PACK_FORMAT) | $(Build.BuildId)
+  CACHE_KEY: jest-v11 | node_modules | $(Agent.OS) | $(Build.SourcesDirectory)/yarn.lock | $(Build.BuildId) | $(AZP_CACHING_TAR)
