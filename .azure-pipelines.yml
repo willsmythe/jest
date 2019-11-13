@@ -36,5 +36,3 @@ variables:
   CI: true
 
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
-
-  NODE_VERSION: 12.x
