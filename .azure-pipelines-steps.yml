@@ -28,11 +28,11 @@ steps:
       path: ./node_modules
     displayName: Cache node_modules
 
-  - task: Cache@2
-    inputs:
-      key: yarn | global_cache | $(Agent.OS) | yarn.lock
-      path: $(YARN_CACHE_FOLDER)
-    displayName: Cache Yarn global
+  # - task: Cache@2
+  #   inputs:
+  #     key: yarn | global_cache | $(Agent.OS) | yarn.lock
+  #     path: $(YARN_CACHE_FOLDER)
+  #   displayName: Cache Yarn global
 
   - script: yarn install-no-ts-build
     displayName: 'Install dependencies'
