@@ -9,8 +9,8 @@ steps:
   # Ensure Node.js 10 is active
   - task: NodeTool@0
     inputs:
-      versionSpec: '12.x'
-    displayName: 'Use Node.js 12'
+      versionSpec: $(NODE_VERSION)
+    displayName: 'Use Node.js $(NODE_VERSION)'
 
   # Ensure Python 2.7 is active
   - task: UsePythonVersion@0
@@ -22,9 +22,9 @@ steps:
   - script: node scripts/remove-postinstall
     displayName: 'Remove postinstall script'
 
-  - task: CacheBeta@1
+  - task: Cache@2
     inputs:
-      key: yarn | $(Agent.OS) | yarn.lock
+      key: yarn | $(Agent.OS) | $(NODE_VERSION) | yarn.lock
       path: ./node_modules
     displayName: Cache Yarn packages
 
