@@ -6,6 +6,12 @@ steps:
   - checkout: none
     path: jest
 
+  # Ensure Node.js 12 is active
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '12.x'
+    displayName: 'Use Node.js 12.x'    
+
   - task: Cache@2
     inputs:
       key: jest | "$(Build.BuildId)" | $(Agent.OS)
