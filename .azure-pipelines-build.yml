@@ -1,0 +1,56 @@
+#
+# Steps for building Jest. See jobs defined in .azure-pipelines.yml
+#
+
+steps:
+  - checkout: self
+    path: jest
+
+  # Ensure Node.js 10 is active
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '12.x'
+    displayName: 'Use Node.js 12.x'
+
+  # Ensure Python 2.7 is active
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '2.7'
+    displayName: 'Use Python 2.7'
+
+  # Run yarn to install dependencies and build
+  - script: node scripts/remove-postinstall
+    displayName: 'Remove postinstall script'
+
+  # - task: Cache@2
+  #   inputs:
+  #     key: yarn | node_modules | $(Agent.OS) | yarn.lock
+  #     path: ./node_modules
+  #   displayName: Cache node_modules
+
+  # - task: Cache@2
+  #   inputs:
+  #     key: yarn | global_cache | $(Agent.OS) | yarn.lock
+  #     path: $(YARN_CACHE_FOLDER)
+  #   displayName: Cache Yarn global
+
+  - script: yarn install-no-ts-build
+    displayName: 'Install dependencies'
+
+  - task: Cache@2
+    inputs:
+      key: jest | "$(System.JobName)" | "$(Build.BuildId)" | $(Agent.OS) | yarn.lock
+      path: $(Build.SourcesDirectory)
+    displayName: Cache everything
+
+  # # Run test-ci-partial
+  # - script: yarn run test-ci-partial
+  #   displayName: 'Run tests'
+
+  # # Publish CI test results
+  # - task: PublishTestResults@2
+  #   inputs:
+  #     testResultsFiles: '**/reports/junit/*.xml'
+  #     testRunTitle: 'CI Tests $(Agent.OS)'
+  #   displayName: 'Publish test results'
+  #   condition: succeededOrFailed()

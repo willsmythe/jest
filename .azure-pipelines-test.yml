@@ -1,0 +1,24 @@
+#
+# Steps for building Jest. See jobs defined in .azure-pipelines.yml
+#
+
+steps:
+  - checkout: none
+
+  - task: Cache@2
+    inputs:
+      key: jest | "$(System.JobName)" | "$(Build.BuildId)" | $(Agent.OS) | yarn.lock
+      path: $(Pipeline.Workspace)/jest
+    displayName: Restore cache
+
+  # Run test-ci-partial
+  - script: yarn run test-ci-partial
+    displayName: 'Run tests'
+
+  # Publish CI test results
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFiles: '**/reports/junit/*.xml'
+      testRunTitle: 'CI Tests $(Agent.OS)'
+    displayName: 'Publish test results'
+    condition: succeededOrFailed()

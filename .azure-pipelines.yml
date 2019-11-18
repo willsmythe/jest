@@ -2,12 +2,14 @@
 # Azure Pipelines configuration for building and testing Jest on Linux, Windows, and macOS.
 #
 
-jobs:
+stages:
+- stage: build
+  jobs:
   - job: Linux
     pool:
       vmImage: ubuntu-16.04
     steps:
-      - template: .azure-pipelines-steps.yml
+      - template: .azure-pipelines-build.yml
 
   - job: Windows
     pool:
@@ -17,7 +19,27 @@ jobs:
           git config --global core.autocrlf false
           git config --global core.symlinks true
         displayName: 'Preserve LF endings and symbolic links on check out'
-      - template: .azure-pipelines-steps.yml
+      - template: .azure-pipelines-build.yml
+
+  - job: macOS
+    pool:
+      vmImage: macos-10.13
+    steps:
+      - template: .azure-pipelines-build.yml
+
+- stage: test
+  jobs:
+  - job: Linux
+    pool:
+      vmImage: ubuntu-16.04
+    steps:
+      - template: .azure-pipelines-test.yml
+
+  - job: Windows
+    pool:
+      vmImage: vs2017-win2016
+    steps:
+      - template: .azure-pipelines-test.yml
 
   - job: macOS
     pool:
@@ -26,7 +48,7 @@ jobs:
       # This step can be removed once Mercurial gets installed on the macOS image. See https://github.com/Microsoft/azure-pipelines-image-generation/issues/604
       - script: HOMEBREW_NO_AUTO_UPDATE=1 brew install mercurial
         displayName: 'Install Mercurial'
-      - template: .azure-pipelines-steps.yml
+      - template: .azure-pipelines-test.yml
 
 variables:
   # Used by chalk. Ensures output from Jest includes ANSI escape characters that are needed to match test snapshots.
