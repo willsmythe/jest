@@ -3,7 +3,7 @@
 #
 
 stages:
-- stage: build
+- stage: Build
   jobs:
   - job: Linux
     pool:
@@ -18,7 +18,7 @@ stages:
       - script: |
           git config --global core.autocrlf false
           git config --global core.symlinks true
-        displayName: 'Preserve LF endings and symbolic links on check out'
+        displayName: 'Preserve LF endings and symbolic links (Windows)'
       - template: .azure-pipelines-build.yml
 
   - job: macOS
@@ -27,7 +27,7 @@ stages:
     steps:
       - template: .azure-pipelines-build.yml
 
-- stage: test
+- stage: Test
   jobs:
   - job: Linux
     pool:

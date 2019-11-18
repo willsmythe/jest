@@ -8,7 +8,7 @@ steps:
 
   - task: Cache@2
     inputs:
-      key: jest | "$(System.JobId)" | "$(Build.BuildId)" | $(Agent.OS)
+      key: jest | "$(Build.BuildId)" | $(Agent.OS)
       path: $(Pipeline.Workspace)/jest
     displayName: Restore cache
 
