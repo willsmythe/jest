@@ -39,9 +39,9 @@ steps:
 
   - task: Cache@2
     inputs:
-      key: jest | "$(System.JobName)" | "$(Build.BuildId)" | $(Agent.OS) | yarn.lock
+      key: jest | "$(System.JobId)" | "$(Build.BuildId)" | $(Agent.OS)
       path: $(Build.SourcesDirectory)
-    displayName: Cache everything
+    displayName: Cache
 
   # # Run test-ci-partial
   # - script: yarn run test-ci-partial
