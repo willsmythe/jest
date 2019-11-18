@@ -4,6 +4,7 @@
 
 steps:
   - checkout: none
+    path: jest
 
   - task: Cache@2
     inputs:
@@ -14,11 +15,12 @@ steps:
   # Run test-ci-partial
   - script: yarn run test-ci-partial
     displayName: 'Run tests'
+    workingDirectory: $(Pipeline.Workspace)/jest
 
   # Publish CI test results
   - task: PublishTestResults@2
     inputs:
-      testResultsFiles: '**/reports/junit/*.xml'
+      testResultsFiles: '$(Pipeline.Workspace)/jest/**/reports/junit/*.xml'
       testRunTitle: 'CI Tests $(Agent.OS)'
     displayName: 'Publish test results'
     condition: succeededOrFailed()
